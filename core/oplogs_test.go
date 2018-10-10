@@ -2,7 +2,6 @@ package argos
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/mongodb/mongo-go-driver/bson"
@@ -17,17 +16,17 @@ func TestPrintOplogs(t *testing.T) {
 	collname := "oplogs"
 	connStr, e1 := connstring.Parse(uri)
 	if e1 != nil {
-		panic(e1)
+		t.Fatal(e1)
 	}
 	client, e2 := mongo.Connect(context.Background(), connStr.String(), nil)
 	if e2 != nil {
-		panic(e2)
+		t.Fatal(e2)
 	}
 
-	fmt.Println(connStr.Database, client)
+	t.Log(connStr.Database)
 	pipeline, e3 := bson.ParseExtJSONArray(pipelineStr)
 	if e3 != nil {
-		panic(e3)
+		t.Fatal(e3)
 	}
 
 	go func() {

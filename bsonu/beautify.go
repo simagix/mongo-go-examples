@@ -1,4 +1,4 @@
-package argos
+package bsonu
 
 import "encoding/json"
 

@@ -7,6 +7,7 @@ import (
 
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo"
+	"github.com/simagix/argos/bsonu"
 )
 
 // PrintOpLogs prints oplogs in JSON format
@@ -30,7 +31,7 @@ func PrintOpLogs(client *mongo.Client, dbname string, collname string, pipeline 
 			log.Fatal(err)
 		}
 
-		str, _ := BeautifyJSON(elem.ToExtJSON(true))
+		str, _ := bsonu.BeautifyJSON(elem.ToExtJSON(true))
 		fmt.Println(str)
 	}
 
