@@ -11,6 +11,14 @@ sleep 2
 
 mongo --quiet mongodb://localhost:30097/argos?replicaSet=replset --eval 'db.oplogs.drop()'
 mongo --quiet mongodb://localhost:30097/argos?replicaSet=replset --eval 'db.oplogs.insert({"_id": "30097", "scores": [100]})'
+
+#
+# Case 1: prints all oplogs
+#   go run argos.go "mongodb://localhost:30097/argos?replicaSet=replset" oplogs
+# Case 2: print only updates
+#   go run argos.go "mongodb://localhost:30097/argos?replicaSet=replset" oplogs '[{"$match": {"operationType": "update"}}]'
+#
+
 GOCACHE=off go test ./...
 sleep 2
 mongo --quiet mongodb://localhost:30097/argos?replicaSet=replset --eval 'db.oplogs.update({"_id": "30097"}, { "\$push": {"scores": 98}})'
