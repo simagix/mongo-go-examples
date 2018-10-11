@@ -18,8 +18,8 @@ mongo --quiet mongodb://localhost:30097/argos?replicaSet=replset --eval 'db.oplo
 # Case 2: print only updates
 #   go run argos.go "mongodb://localhost:30097/argos?replicaSet=replset" oplogs '[{"$match": {"operationType": "update"}}]'
 #
-
-GOCACHE=off go test ./...
+export DATABASE_URL="mongodb://localhost:30097/argos?replicaSet=replset"
+GOCACHE=off go test ./... -v
 sleep 2
 mongo --quiet mongodb://localhost:30097/argos?replicaSet=replset --eval 'db.oplogs.update({"_id": "30097"}, { "\$push": {"scores": 98}})'
 mongo --quiet mongodb://localhost:30097/argos?replicaSet=replset --eval 'db.oplogs.drop()'
