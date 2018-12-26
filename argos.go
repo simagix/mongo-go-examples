@@ -6,9 +6,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/core/connstring"
 	"github.com/mongodb/mongo-go-driver/mongo"
+	"github.com/mongodb/mongo-go-driver/x/network/connstring"
 	"github.com/simagix/argos/core"
 )
 
@@ -29,15 +28,7 @@ func main() {
 		panic(err)
 	}
 
-	var pipelineStr string
-	if len(flag.Args()) >= 3 {
-		pipelineStr = flag.Arg(2)
-	}
-	var pipeline *bson.Array
-	if pipelineStr == "" {
-		pipelineStr = "[]"
-	}
-	pipeline, err = bson.ParseExtJSONArray(pipelineStr)
+	pipeline := mongo.Pipeline{}
 	if err != nil {
 		panic(err)
 	}

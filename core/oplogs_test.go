@@ -2,12 +2,13 @@ package argos
 
 import (
 	"context"
+	"encoding/json"
 	"os"
 	"testing"
 
 	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/core/connstring"
 	"github.com/mongodb/mongo-go-driver/mongo"
+	"github.com/mongodb/mongo-go-driver/x/network/connstring"
 )
 
 // example: argos "mongodb://localhost:27017/argos?replicaSet=replset" students '[{"$match": {"operationType": "update"}}]'
@@ -16,7 +17,9 @@ func TestPrintOplogs(t *testing.T) {
 	if os.Getenv("DATABASE_URL") != "" {
 		uri = os.Getenv("DATABASE_URL")
 	}
-	pipelineStr := "[]"
+	in := []byte(`[]`)
+	var raw bson.D
+	json.Unmarshal(in, &raw)
 	collname := "oplogs"
 	connStr, e1 := connstring.Parse(uri)
 	if e1 != nil {
@@ -28,10 +31,7 @@ func TestPrintOplogs(t *testing.T) {
 	}
 
 	t.Log(connStr.Database)
-	pipeline, e3 := bson.ParseExtJSONArray(pipelineStr)
-	if e3 != nil {
-		t.Fatal(e3)
-	}
+	pipeline := mongo.Pipeline{raw}
 
 	go func() {
 		PrintOpLogs(client, connStr.Database, collname, pipeline)

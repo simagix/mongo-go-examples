@@ -2,20 +2,20 @@ package argos
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo"
-	"github.com/simagix/argos/bsonu"
 )
 
 // PrintOpLogs prints oplogs in JSON format
-func PrintOpLogs(client *mongo.Client, dbname string, collname string, pipeline *bson.Array) {
+func PrintOpLogs(client *mongo.Client, dbname string, collname string, pipeline mongo.Pipeline) {
 	fmt.Println("Watching", dbname+"."+collname)
-	db := client.Database(dbname)
-	coll := db.Collection(collname)
-	ctx := context.Background()
+	var err error
+	var coll = client.Database(dbname).Collection(collname)
+	var ctx = context.Background()
 
 	fmt.Println("pipeline", pipeline)
 	cur, err := coll.Watch(ctx, pipeline)
@@ -23,19 +23,16 @@ func PrintOpLogs(client *mongo.Client, dbname string, collname string, pipeline 
 		panic(err)
 	}
 	defer cur.Close(ctx)
-
+	var b []byte
+	var doc bson.M
 	for cur.Next(ctx) {
-		elem := bson.NewDocument()
-
-		if err := cur.Decode(elem); err != nil {
+		if err = cur.Decode(&doc); err != nil {
 			log.Fatal(err)
 		}
-
-		str, _ := bsonu.BeautifyJSON(elem.ToExtJSON(true))
-		fmt.Println(str)
+		b, _ = json.MarshalIndent(doc, "", "  ")
+		fmt.Println(string(b))
 	}
-
-	if err := cur.Err(); err != nil {
+	if err = cur.Err(); err != nil {
 		log.Fatal(err)
 	}
 }
