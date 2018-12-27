@@ -4,6 +4,7 @@ package examples
 
 import (
 	"context"
+	"encoding/json"
 	"testing"
 
 	"github.com/mongodb/mongo-go-driver/bson"
@@ -12,28 +13,31 @@ import (
 	"github.com/mongodb/mongo-go-driver/x/bsonx"
 )
 
-func TestDeleteOne(t *testing.T) {
+func TestUpdateOne(t *testing.T) {
 	var err error
 	var client *mongo.Client
 	var collection *mongo.Collection
 	var ctx = context.Background()
 	var doc = bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta"}
-	var result *mongo.DeleteResult
+	var result *mongo.UpdateResult
 	client = getMongoClient()
 	collection = client.Database(dbName).Collection(collectionName)
 	if _, err = collection.InsertOne(ctx, doc); err != nil {
 		t.Fatal(err)
 	}
-	if result, err = collection.DeleteOne(ctx, bson.M{"_id": doc["_id"]}); err != nil {
+	var update bson.M
+	json.Unmarshal([]byte(`{ "$set": {"year": 1998}}`), &update)
+	if result, err = collection.UpdateOne(ctx, bson.M{"_id": doc["_id"]}, update); err != nil {
 		t.Fatal(err)
 	}
 
-	if result.DeletedCount != 1 {
-		t.Fatal("delete failed, expected 1 but got", result.DeletedCount)
+	if result.ModifiedCount != 1 {
+		t.Fatal("update failed, expected 1 but got", result.ModifiedCount)
 	}
+	collection.DeleteMany(ctx, bson.M{"hometown": "Atlanta"})
 }
 
-func TestDeleteMany(t *testing.T) {
+func TestUpdateMany(t *testing.T) {
 	var err error
 	var client *mongo.Client
 	var collection *mongo.Collection
@@ -41,16 +45,19 @@ func TestDeleteMany(t *testing.T) {
 	var docs []interface{}
 	docs = append(docs, bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta", "counter": bsonx.Int32(1)})
 	docs = append(docs, bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta", "counter": bsonx.Int32(2)})
-	var result *mongo.DeleteResult
+	var result *mongo.UpdateResult
 	client = getMongoClient()
 	collection = client.Database(dbName).Collection(collectionName)
 	if _, err = collection.InsertMany(ctx, docs); err != nil {
 		t.Fatal(err)
 	}
-	if result, err = collection.DeleteMany(ctx, bson.M{"hometown": "Atlanta"}); err != nil {
+	var update bson.M
+	json.Unmarshal([]byte(`{ "$set": {"year": 1998}}`), &update)
+	if result, err = collection.UpdateMany(ctx, bson.M{"hometown": "Atlanta"}, update); err != nil {
 		t.Fatal(err)
 	}
-	if result.DeletedCount != 2 {
-		t.Error("delete failed, expected 2 but got", result.DeletedCount)
+	if result.ModifiedCount != 2 {
+		t.Fatal("update failed, expected 2 but got", result.ModifiedCount)
 	}
+	collection.DeleteMany(ctx, bson.M{"hometown": "Atlanta"})
 }
