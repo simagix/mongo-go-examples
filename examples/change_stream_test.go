@@ -14,7 +14,7 @@ import (
 )
 
 // example: argos "mongodb://localhost:27017/argos?replicaSet=replset" students '[{"$match": {"operationType": "update"}}]'
-func TestPrintOplogs(t *testing.T) {
+func TestChangeStream(t *testing.T) {
 	uri := "mongodb://localhost:27017/argos?replicaSet=replset"
 	if os.Getenv("DATABASE_URL") != "" {
 		uri = os.Getenv("DATABASE_URL")

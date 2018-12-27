@@ -12,25 +12,28 @@ import (
 	"github.com/mongodb/mongo-go-driver/x/bsonx"
 )
 
-func TestInsertOne(t *testing.T) {
+func TestDeleteOne(t *testing.T) {
 	var err error
 	var client *mongo.Client
 	var collection *mongo.Collection
 	var ctx = context.Background()
 	var doc = bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta"}
-	var result *mongo.InsertOneResult
+	var result *mongo.DeleteResult
 	client = getMongoClient()
 	collection = client.Database(dbName).Collection(collectionName)
-	if result, err = collection.InsertOne(ctx, doc); err != nil {
+	if _, err = collection.InsertOne(ctx, doc); err != nil {
 		t.Fatal(err)
 	}
-	if result.InsertedID != doc["_id"] {
-		t.Fatal(result.InsertedID, doc["_id"])
+	if result, err = collection.DeleteOne(ctx, bson.M{"_id": doc["_id"]}); err != nil {
+		t.Fatal(err)
 	}
-	collection.DeleteMany(ctx, bson.M{"hometown": "Atlanta"})
+
+	if result.DeletedCount != 1 {
+		t.Fatal("delete failed")
+	}
 }
 
-func TestInsertMany(t *testing.T) {
+func TestDeleteMany(t *testing.T) {
 	var err error
 	var client *mongo.Client
 	var collection *mongo.Collection
@@ -38,23 +41,16 @@ func TestInsertMany(t *testing.T) {
 	var docs []interface{}
 	docs = append(docs, bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta", "counter": bsonx.Int32(1)})
 	docs = append(docs, bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta", "counter": bsonx.Int32(2)})
-	var result *mongo.InsertManyResult
+	var result *mongo.DeleteResult
 	client = getMongoClient()
 	collection = client.Database(dbName).Collection(collectionName)
-	if result, err = collection.InsertMany(ctx, docs); err != nil {
+	if _, err = collection.InsertMany(ctx, docs); err != nil {
 		t.Fatal(err)
 	}
-	for _, doc := range docs {
-		isFound := false
-		for _, id := range result.InsertedIDs {
-			if id == doc.(bson.M)["_id"] {
-				isFound = true
-				continue
-			}
-		}
-		if !isFound {
-			t.Fatal(doc.(bson.M)["_id"], "not inserted")
-		}
+	if result, err = collection.DeleteMany(ctx, bson.M{"hometown": "Atlanta"}); err != nil {
+		t.Fatal(err)
 	}
-	collection.DeleteMany(ctx, bson.M{"hometown": "Atlanta"})
+	if result.DeletedCount != 2 {
+		t.Fatal("delete failed, expected", result.DeletedCount)
+	}
 }
