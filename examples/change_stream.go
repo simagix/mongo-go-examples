@@ -1,4 +1,6 @@
-package argos
+// Copyright 2018 Kuei-chun Chen. All rights reserved.
+
+package examples
 
 import (
 	"context"
@@ -10,14 +12,12 @@ import (
 	"github.com/mongodb/mongo-go-driver/mongo"
 )
 
-// PrintOpLogs prints oplogs in JSON format
-func PrintOpLogs(client *mongo.Client, dbname string, collname string, pipeline mongo.Pipeline) {
+// ChangeStream prints oplogs in JSON format
+func ChangeStream(client *mongo.Client, dbname string, collname string, pipeline mongo.Pipeline) {
 	fmt.Println("Watching", dbname+"."+collname)
 	var err error
 	var coll = client.Database(dbname).Collection(collname)
 	var ctx = context.Background()
-
-	fmt.Println("pipeline", pipeline)
 	cur, err := coll.Watch(ctx, pipeline)
 	if err != nil {
 		panic(err)

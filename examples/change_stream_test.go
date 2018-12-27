@@ -1,4 +1,6 @@
-package argos
+// Copyright 2018 Kuei-chun Chen. All rights reserved.
+
+package examples
 
 import (
 	"context"
@@ -31,9 +33,9 @@ func TestPrintOplogs(t *testing.T) {
 	}
 
 	t.Log(connStr.Database)
-	pipeline := mongo.Pipeline{raw}
+	pipeline := mongo.Pipeline{}
 
 	go func() {
-		PrintOpLogs(client, connStr.Database, collname, pipeline)
+		ChangeStream(client, connStr.Database, collname, pipeline)
 	}()
 }

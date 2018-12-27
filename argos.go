@@ -1,3 +1,5 @@
+// Copyright 2018 Kuei-chun Chen. All rights reserved.
+
 package main
 
 import (
@@ -8,7 +10,7 @@ import (
 
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/mongodb/mongo-go-driver/x/network/connstring"
-	"github.com/simagix/argos/core"
+	"github.com/simagix/argos/examples"
 )
 
 func main() {
@@ -32,5 +34,5 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	argos.PrintOpLogs(client, connStr.Database, flag.Arg(1), pipeline)
+	examples.ChangeStream(client, connStr.Database, flag.Arg(1), pipeline)
 }
