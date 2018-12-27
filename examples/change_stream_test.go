@@ -33,7 +33,8 @@ func TestChangeStream(t *testing.T) {
 	}
 
 	t.Log(connStr.Database)
-	pipeline := mongo.Pipeline{}
+	var pipeline []bson.D
+	pipeline = mongo.Pipeline{}
 
 	go func() {
 		ChangeStream(client, connStr.Database, collname, pipeline)

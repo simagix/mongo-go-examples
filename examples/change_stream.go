@@ -10,16 +10,20 @@ import (
 
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo"
+	"github.com/mongodb/mongo-go-driver/mongo/options"
 )
 
 // ChangeStream prints oplogs in JSON format
-func ChangeStream(client *mongo.Client, dbname string, collname string, pipeline mongo.Pipeline) {
+func ChangeStream(client *mongo.Client, dbname string, collname string, pipeline []bson.D) {
 	fmt.Println("Watching", dbname+"."+collname)
 	var err error
 	var coll = client.Database(dbname).Collection(collname)
 	var ctx = context.Background()
-	cur, err := coll.Watch(ctx, pipeline)
-	if err != nil {
+	var cur mongo.Cursor
+	fmt.Println("pipeline", pipeline)
+	opts := options.ChangeStream()
+	opts.SetFullDocument("updateLookup")
+	if cur, err = coll.Watch(ctx, pipeline, opts); err != nil {
 		panic(err)
 	}
 	defer cur.Close(ctx)
