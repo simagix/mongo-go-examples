@@ -3,8 +3,12 @@
 package examples
 
 import (
+	"os"
+
 	"github.com/mongodb/mongo-go-driver/mongo"
+	"github.com/mongodb/mongo-go-driver/x/network/connstring"
 	"github.com/simagix/keyhole/mdb"
+	"github.com/simagix/keyhole/sim"
 )
 
 const dbName = "keyhole"
@@ -14,9 +18,16 @@ func getMongoClient() *mongo.Client {
 	var err error
 	var client *mongo.Client
 
-	if client, err = mdb.NewMongoClient("mongodb://localhost/keyhole?replicaSet=replset"); err != nil {
-		panic(err)
+	uri := "mongodb://localhost/keyhole?replicaSet=replset"
+	if os.Getenv("DATABASE_URL") != "" {
+		uri = os.Getenv("DATABASE_URL")
 	}
 
+	if client, err = mdb.NewMongoClient(uri); err != nil {
+		panic(err)
+	}
+	cs, _ := connstring.Parse(uri)
+	sb := sim.NewSeedBase("", "", 1000, true, cs.Database)
+	sb.SeedData(client)
 	return client
 }

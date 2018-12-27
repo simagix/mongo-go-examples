@@ -11,7 +11,7 @@ sleep 2
 
 mongo --quiet mongodb://localhost:30097/argos?replicaSet=replset --eval 'db.oplogs.drop()'
 mongo --quiet mongodb://localhost:30097/argos?replicaSet=replset --eval 'db.oplogs.insert({"_id": "30097", "scores": [100]})'
-
+export DATABASE_URL="mongodb://localhost:30097/argos?replicaSet=replset"
 #
 # Case 1: prints all oplogs
 #   go run argos.go "mongodb://localhost:30097/argos?replicaSet=replset" oplogs
@@ -25,6 +25,6 @@ mongo --quiet mongodb://localhost:30097/argos?replicaSet=replset --eval 'db.oplo
 mongo --quiet mongodb://localhost:30097/argos?replicaSet=replset --eval 'db.oplogs.drop()'
 
 echo ; echo "Shutdown mongod"
-mongo --quiet mongodb://localhost:30097/admin?replicaSet=replset --eval 'db.getSisterDB("admin").adminCommand( { replSetStepDown: 0, secondaryCatchUpPeriodSecs: 0, force: true } )'
+# mongo --quiet mongodb://localhost:30097/admin?replicaSet=replset --eval 'db.getSisterDB("admin").adminCommand( { replSetStepDown: 0, secondaryCatchUpPeriodSecs: 0, force: true } )'
 mongo --quiet --port 30097 --eval 'db.getSisterDB("admin").shutdownServer()'
 rm -rf data/*
