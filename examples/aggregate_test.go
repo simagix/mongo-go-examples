@@ -8,7 +8,7 @@ import (
 
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo"
-	"github.com/mongodb/mongo-go-driver/x/bsonx"
+	"github.com/mongodb/mongo-go-driver/mongo/options"
 )
 
 func TestAggregate(t *testing.T) {
@@ -23,37 +23,26 @@ func TestAggregate(t *testing.T) {
 
 	/*
 		[
-			{$match: { "color": "Red" }},
-			{$group: { _id: "$brand", "count": { "$sum": 1 } }},
-			{$project: { "brand": "$_id", "_id": 0, "count": 1 }}
+			{"$match": { "color": "Red" }},
+			{"$group": { _id: "$brand", "count": { "$sum": 1 } }},
+			{"$project": { "brand": "$_id", "_id": 0, "count": 1 }}
 		]
 	*/
 
-	pipeline := bsonx.Arr{
-		bsonx.Document(
-			bsonx.Doc{{Key: "$match", Value: bsonx.Document(bsonx.Doc{
-				{Key: "color", Value: bsonx.String("Red")},
-			})}},
-		),
-		bsonx.Document(
-			bsonx.Doc{{Key: "$group", Value: bsonx.Document(bsonx.Doc{
-				{Key: "_id", Value: bsonx.String("$brand")},
-				{Key: "count", Value: bsonx.Document(bsonx.Doc{{Key: "$sum", Value: bsonx.Int32(1)}})},
-			})}},
-		),
-		bsonx.Document(
-			bsonx.Doc{{
-				Key: "$project", Value: bsonx.Document(bsonx.Doc{
-					{Key: "brand", Value: bsonx.String("$_id")},
-					{Key: "_id", Value: bsonx.Int32(0)},
-					{Key: "count", Value: bsonx.Int32(1)},
-				}),
-			}},
-		)}
+	pipeline := bson.A{
+		bson.D{{Key: "$match", Value: bson.D{{Key: "color", Value: "Red"}}}},
+		bson.D{{Key: "$group", Value: bson.D{{Key: "_id", Value: "$brand"},
+			{Key: "count", Value: bson.D{{Key: "$sum", Value: 1}}}}}},
+		bson.D{{Key: "$project", Value: bson.D{{Key: "brand", Value: "$_id"},
+			{Key: "_id", Value: 0},
+			{Key: "count", Value: 1}}}},
+	}
 
-	t.Log(pipeline)
 	collection = client.Database(dbName).Collection(collectionName)
-	if cur, err = collection.Aggregate(ctx, pipeline); err != nil {
+	opts := options.Aggregate()
+	opts.SetAllowDiskUse(true)
+	opts.SetBatchSize(5)
+	if cur, err = collection.Aggregate(ctx, pipeline, opts); err != nil {
 		t.Fatal(err)
 	}
 	total := 0
