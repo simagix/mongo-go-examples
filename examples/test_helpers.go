@@ -4,9 +4,9 @@ package examples
 
 import (
 	"context"
+	"fmt"
 	"os"
 
-	"github.com/mgo/bson"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/simagix/keyhole/mdb"
 	"github.com/simagix/keyhole/sim"
@@ -14,6 +14,7 @@ import (
 
 const dbName = "argos"
 const collectionName = "cars"
+const collectionFavorites = "favorites"
 
 func getMongoClient() *mongo.Client {
 	var err error
@@ -34,8 +35,8 @@ func seedCarsData(client *mongo.Client, database string) {
 	var err error
 	var count int64
 	collection := client.Database(dbName).Collection(collectionName)
-	filter := bson.D{}
-	if count, err = collection.Count(context.Background(), filter); err != nil {
+	if count, err = collection.Count(context.Background(), nil); err != nil {
+		fmt.Println(err)
 		return
 	}
 	if count == 0 {
@@ -45,5 +46,23 @@ func seedCarsData(client *mongo.Client, database string) {
 		f.SetDatabase(database)
 		f.SetShowProgress(false)
 		f.SeedCars(client)
+	}
+}
+
+func seedFavoritesData(client *mongo.Client, database string) {
+	var err error
+	var count int64
+	collection := client.Database(dbName).Collection(collectionFavorites)
+	if count, err = collection.Count(context.Background(), nil); err != nil {
+		fmt.Println(err)
+		return
+	}
+	if count == 0 {
+		f := sim.NewFeeder()
+		f.SetTotal(100)
+		f.SetIsDrop(true)
+		f.SetDatabase(database)
+		f.SetShowProgress(false)
+		f.SeedFavorites(client)
 	}
 }
