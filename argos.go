@@ -18,8 +18,10 @@ func main() {
 	var err error
 	var client *mongo.Client
 	var connStr connstring.ConnString
-	pipe := flag.String("pipeline", "", "aggregation pipeline")
 	collection := flag.String("collection", "", "collection to watch")
+	pipe := flag.String("pipeline", "", "aggregation pipeline")
+	caFile := flag.String("sslCAFile", "", "CA file")
+	clientPEMFile := flag.String("sslPEMKeyFile", "", "client PEM file")
 
 	flag.Parse()
 	flagset := make(map[string]bool)
@@ -29,7 +31,7 @@ func main() {
 		panic(err)
 	}
 
-	if client, err = mdb.NewMongoClient(flag.Arg(0)); err != nil {
+	if client, err = mdb.NewMongoClient(flag.Arg(0), *caFile, *clientPEMFile); err != nil {
 		panic(err)
 	}
 

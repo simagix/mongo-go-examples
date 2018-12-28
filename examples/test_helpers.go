@@ -8,7 +8,6 @@ import (
 	"os"
 
 	"github.com/mongodb/mongo-go-driver/mongo"
-	"github.com/simagix/keyhole/mdb"
 	"github.com/simagix/keyhole/sim"
 )
 
@@ -25,7 +24,7 @@ func getMongoClient() *mongo.Client {
 		uri = os.Getenv("DATABASE_URL")
 	}
 
-	if client, err = mdb.NewMongoClient(uri); err != nil {
+	if client, err = mongo.Connect(context.Background(), uri); err != nil {
 		panic(err)
 	}
 	return client

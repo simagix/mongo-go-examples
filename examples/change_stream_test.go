@@ -34,9 +34,7 @@ func TestChangeStreamClient(t *testing.T) {
 	if cs, err = connstring.Parse(uri); err != nil {
 		t.Fatal(err)
 	}
-	if client, err = mdb.NewMongoClient(uri); err != nil {
-		t.Fatal(err)
-	}
+	client = getMongoClient()
 	var pipeline []bson.D
 	pipeline = mongo.Pipeline{}
 	c := client.Database(cs.Database).Collection(collection)
@@ -64,9 +62,7 @@ func TestChangeStreamDatabase(t *testing.T) {
 	if cs, err = connstring.Parse(uri); err != nil {
 		t.Fatal(err)
 	}
-	if client, err = mdb.NewMongoClient(uri); err != nil {
-		t.Fatal(err)
-	}
+	client = getMongoClient()
 	var pipeline []bson.D
 	pipeline = mongo.Pipeline{}
 	c := client.Database(cs.Database).Collection(collection)
@@ -95,9 +91,7 @@ func TestChangeStreamCollection(t *testing.T) {
 	if cs, err = connstring.Parse(uri); err != nil {
 		t.Fatal(err)
 	}
-	if client, err = mdb.NewMongoClient(uri); err != nil {
-		t.Fatal(err)
-	}
+	client = getMongoClient()
 	var pipeline []bson.D
 	pipeline = mongo.Pipeline{}
 	c := client.Database(cs.Database).Collection(collection)
@@ -126,9 +120,7 @@ func TestChangeStreamCollectionWithPipeline(t *testing.T) {
 	if cs, err = connstring.Parse(uri); err != nil {
 		t.Fatal(err)
 	}
-	if client, err = mdb.NewMongoClient(uri); err != nil {
-		t.Fatal(err)
-	}
+	client = getMongoClient()
 	var pipeline = mdb.GetAggregatePipeline(`[{"$match": {"operationType": {"$in": ["update", "delete"] } }}]`)
 	c := client.Database(cs.Database).Collection(collection)
 	c.InsertOne(ctx, bson.M{"city": "Atlanta"})
@@ -145,13 +137,13 @@ func TestChangeStreamCollectionWithPipeline(t *testing.T) {
 }
 
 func execute(c *mongo.Collection) {
-	time.Sleep(3 * time.Second) // wait for change stream to init
+	time.Sleep(2 * time.Second) // wait for change stream to init
 	var doc = bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta"}
 	c.InsertOne(context.Background(), doc)
 	var update bson.M
 	json.Unmarshal([]byte(`{ "$set": {"year": 1998}}`), &update)
 	c.UpdateOne(context.Background(), bson.M{"_id": doc["_id"]}, update)
 	c.DeleteMany(context.Background(), bson.M{"hometown": "Atlanta"})
-	time.Sleep(3 * time.Second) // wait for CS to print messages
+	time.Sleep(1 * time.Second) // wait for CS to print messages
 	c.Drop(context.Background())
 }
