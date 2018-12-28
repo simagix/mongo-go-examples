@@ -20,13 +20,13 @@ mongo --quiet mongodb://localhost:30097/argos?replicaSet=replset --eval 'db.oplo
 argos "mongodb://localhost:30097/argos?replicaSet=replset" oplogs
 ```
 
-## Case 2: print only updates
+### Case 2: print only updates
 
 ```
 argos "mongodb://localhost:30097/argos?replicaSet=replset" oplogs '[{"$match": {"operationType": "update"}}]'
 ```
 
-### Generate oplogs
+#### Generate oplogs
 
 ```
 mongo --quiet mongodb://localhost:30097/argos?replicaSet=replset --eval 'db.oplogs.insert({"_id": "90210", "scores": [85]})'
