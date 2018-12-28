@@ -4,26 +4,25 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"os"
 
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/mongodb/mongo-go-driver/x/network/connstring"
-	"github.com/simagix/argos/examples"
 	"github.com/simagix/keyhole/mdb"
+	"github.com/simagix/mongo-go-examples/examples"
 )
 
 func main() {
-	flag.Parse()
-	if len(flag.Args()) < 2 {
-		fmt.Println("usage: argos uri collection pipeline")
-		os.Exit(1)
-	}
-
 	var err error
 	var client *mongo.Client
 	var connStr connstring.ConnString
+	pipe := flag.String("pipeline", "", "aggregation pipeline")
+	collection := flag.String("collection", "", "collection to watch")
+
+	flag.Parse()
+	flagset := make(map[string]bool)
+	flag.Visit(func(f *flag.Flag) { flagset[f.Name] = true })
+
 	if connStr, err = connstring.Parse(flag.Arg(0)); err != nil {
 		panic(err)
 	}
@@ -33,9 +32,13 @@ func main() {
 	}
 
 	var pipeline = []bson.D{}
-	if len(flag.Args()) == 3 {
-		pipeline = mdb.GetAggregatePipeline(flag.Arg(2))
+	if *pipe != "" {
+		pipeline = mdb.GetAggregatePipeline(*pipe)
 	}
 
-	examples.ChangeStream(client, connStr.Database, flag.Arg(1), pipeline)
+	stream := examples.NewChangeStream()
+	stream.SetCollection(*collection)
+	stream.SetDatabase(connStr.Database)
+	stream.SetPipeline(pipeline)
+	stream.Watch(client)
 }

@@ -14,22 +14,27 @@ mongo --quiet mongodb://localhost:30097/admin --eval 'rs.initiate()'
 mongo --quiet mongodb://localhost:30097/argos?replicaSet=replset --eval 'db.oplogs.insert({"_id": "30097", "scores": [100]})'
 ```
 
-### Case 1: prints all oplogs
+### Case 1: Watch All Changes
 
 ```
-argos "mongodb://localhost:30097/argos?replicaSet=replset" oplogs
+argos "mongodb://localhost:30097/?replicaSet=replset"
 ```
 
-### Case 2: print only updates
+### Case 2: Watch Changes From a Database
 
 ```
-argos "mongodb://localhost:30097/argos?replicaSet=replset" oplogs '[{"$match": {"operationType": "update"}}]'
+argos "mongodb://localhost:30097/argos?replicaSet=replset"
 ```
 
-#### Generate oplogs
+### Case 3: Watch Changes From a Collection
 
 ```
-mongo --quiet mongodb://localhost:30097/argos?replicaSet=replset --eval 'db.oplogs.insert({"_id": "90210", "scores": [85]})'
-mongo --quiet mongodb://localhost:30097/argos?replicaSet=replset --eval 'db.oplogs.update({"_id": "90210"}, { "\$push": {"scores": 98}})'
-mongo --quiet mongodb://localhost:30097/argos?replicaSet=replset --eval 'db.oplogs.remove({"_id": "90210"})'
+argos --collection oplogs "mongodb://localhost:30097/argos?replicaSet=replset"
+```
+
+### Case 4: Watch Changes From a Collection With a Pipeline
+
+```
+argos --collection --pipeline '[{"$match": {"operationType": "update"}}]' \
+  "mongodb://localhost:30097/argos?replicaSet=replset"
 ```
