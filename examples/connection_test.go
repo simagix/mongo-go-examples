@@ -27,7 +27,11 @@ func getMongoClient() *mongo.Client {
 		panic(err)
 	}
 	cs, _ := connstring.Parse(uri)
-	sb := sim.NewSeedBase("", "", 1000, true, cs.Database)
-	sb.SeedData(client)
+	f := sim.NewFeeder()
+	f.SetTotal(100)
+	f.SetIsDrop(true)
+	f.SetDatabase(cs.Database)
+	f.SetShowProgress(false)
+	f.SeedCars(client)
 	return client
 }
