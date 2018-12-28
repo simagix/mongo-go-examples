@@ -34,9 +34,7 @@ func main() {
 
 	var pipeline = []bson.D{}
 	if len(flag.Args()) == 3 {
-		if pipeline, err = mdb.GetAggregatePipeline(flag.Arg(2)); err != nil {
-			panic(err)
-		}
+		pipeline = mdb.GetAggregatePipeline(flag.Arg(2))
 	}
 
 	examples.ChangeStream(client, connStr.Database, flag.Arg(1), pipeline)
