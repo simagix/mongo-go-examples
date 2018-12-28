@@ -21,6 +21,7 @@ func TestAggregate(t *testing.T) {
 	var doc bson.M
 
 	client = getMongoClient()
+	seedCarsData(client, dbName)
 
 	pipeline := `[
 		{"$match": { "color": "Red" }},

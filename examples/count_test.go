@@ -17,6 +17,7 @@ func TestCount(t *testing.T) {
 	var ctx = context.Background()
 	var count int64
 	client = getMongoClient()
+	seedCarsData(client, dbName)
 	collection = client.Database(dbName).Collection(collectionName)
 	filter := bson.D{{Key: "color", Value: "Red"}}
 	if count, err = collection.Count(ctx, filter); err != nil {

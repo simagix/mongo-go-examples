@@ -61,7 +61,7 @@ func TestChangeStreamWithPipeline(t *testing.T) {
 	if client, err = mdb.NewMongoClient(uri); err != nil {
 		t.Fatal(err)
 	}
-	var pipeline = mdb.GetAggregatePipeline(`[{"$match": {"operationType": "update"}}]`)
+	var pipeline = mdb.GetAggregatePipeline(`[{"$match": {"operationType": {"$in": ["update", "delete"] } }}]`)
 	c := client.Database(cs.Database).Collection(colection)
 	c.InsertOne(ctx, bson.M{"city": "Atlanta"})
 
