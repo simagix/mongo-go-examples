@@ -3,7 +3,9 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
+	"fmt"
 
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo"
@@ -40,5 +42,11 @@ func main() {
 	stream.SetCollection(*collection)
 	stream.SetDatabase(connStr.Database)
 	stream.SetPipeline(pipeline)
-	stream.Watch(client)
+	stream.Watch(client, echo)
+}
+
+func echo(doc bson.M) {
+	var b []byte
+	b, _ = json.MarshalIndent(doc, "", "  ")
+	fmt.Println(string(b))
 }

@@ -4,7 +4,6 @@ package examples
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 
@@ -19,6 +18,8 @@ type ChangeStream struct {
 	database   string
 	pipeline   []bson.D
 }
+
+type callback func(bson.M)
 
 // SetCollection sets collection
 func (cs *ChangeStream) SetCollection(collection string) {
@@ -41,7 +42,7 @@ func NewChangeStream() *ChangeStream {
 }
 
 // Watch prints oplogs in JSON format
-func (cs *ChangeStream) Watch(client *mongo.Client) {
+func (cs *ChangeStream) Watch(client *mongo.Client, cb callback) {
 	var err error
 	var ctx = context.Background()
 	var cur mongo.Cursor
@@ -68,14 +69,12 @@ func (cs *ChangeStream) Watch(client *mongo.Client) {
 	}
 
 	defer cur.Close(ctx)
-	var b []byte
 	var doc bson.M
 	for cur.Next(ctx) {
 		if err = cur.Decode(&doc); err != nil {
 			log.Fatal(err)
 		}
-		b, _ = json.MarshalIndent(doc, "", "  ")
-		fmt.Println(string(b))
+		cb(doc)
 	}
 	if err = cur.Err(); err != nil {
 		log.Fatal(err)

@@ -19,6 +19,8 @@ import (
 var collection = "oplogs"
 
 // example: argos "mongodb://localhost:27017/argos?replicaSet=replset" students '[{"$match": {"operationType": "update"}}]'
+func silent(doc bson.M) {
+}
 
 func TestChangeStreamClient(t *testing.T) {
 	var err error
@@ -78,7 +80,7 @@ func TestChangeStreamDatabase(t *testing.T) {
 	stream := NewChangeStream()
 	stream.SetDatabase(cs.Database)
 	stream.SetPipeline(pipeline)
-	stream.Watch(client)
+	stream.Watch(client, silent)
 }
 
 func TestChangeStreamCollection(t *testing.T) {
@@ -109,7 +111,7 @@ func TestChangeStreamCollection(t *testing.T) {
 	stream.SetCollection(collection)
 	stream.SetDatabase(cs.Database)
 	stream.SetPipeline(pipeline)
-	stream.Watch(client)
+	stream.Watch(client, silent)
 }
 
 func TestChangeStreamCollectionWithPipeline(t *testing.T) {
@@ -139,7 +141,7 @@ func TestChangeStreamCollectionWithPipeline(t *testing.T) {
 	stream.SetCollection(collection)
 	stream.SetDatabase(cs.Database)
 	stream.SetPipeline(pipeline)
-	stream.Watch(client)
+	stream.Watch(client, silent)
 }
 
 func execute(c *mongo.Collection) {
