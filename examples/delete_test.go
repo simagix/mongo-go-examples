@@ -9,7 +9,6 @@ import (
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"github.com/mongodb/mongo-go-driver/mongo"
-	"github.com/mongodb/mongo-go-driver/x/bsonx"
 )
 
 func TestDeleteOne(t *testing.T) {
@@ -39,8 +38,8 @@ func TestDeleteMany(t *testing.T) {
 	var collection *mongo.Collection
 	var ctx = context.Background()
 	var docs []interface{}
-	docs = append(docs, bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta", "counter": bsonx.Int32(1)})
-	docs = append(docs, bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta", "counter": bsonx.Int32(2)})
+	docs = append(docs, bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta", "counter": 1})
+	docs = append(docs, bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta", "counter": 2})
 	var result *mongo.DeleteResult
 	client = getMongoClient()
 	collection = client.Database(dbName).Collection(collectionName)

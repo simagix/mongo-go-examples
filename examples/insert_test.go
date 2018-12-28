@@ -11,7 +11,6 @@ import (
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/mongodb/mongo-go-driver/mongo/options"
 	"github.com/mongodb/mongo-go-driver/mongo/writeconcern"
-	"github.com/mongodb/mongo-go-driver/x/bsonx"
 )
 
 func TestInsertOne(t *testing.T) {
@@ -59,8 +58,8 @@ func TestInsertMany(t *testing.T) {
 	var collection *mongo.Collection
 	var ctx = context.Background()
 	var docs []interface{}
-	docs = append(docs, bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta", "counter": bsonx.Int32(1)})
-	docs = append(docs, bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta", "counter": bsonx.Int32(2)})
+	docs = append(docs, bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta", "counter": 1})
+	docs = append(docs, bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta", "counter": 2})
 	var result *mongo.InsertManyResult
 	client = getMongoClient()
 	collection = client.Database(dbName).Collection(collectionName)
