@@ -24,7 +24,9 @@ func TestFindOne(t *testing.T) {
 	if err = collection.FindOne(ctx, filter).Decode(&doc); err != nil {
 		t.Fatal(err)
 	}
-	t.Log(doc["brand"])
+	if doc["color"] != "Red" {
+		t.Fatal("not matched", doc["color"])
+	}
 }
 
 func TestFindMany(t *testing.T) {
@@ -38,15 +40,18 @@ func TestFindMany(t *testing.T) {
 	seedCarsData(client, dbName)
 	collection = client.Database(dbName).Collection(collectionName)
 	filter := bson.D{{Key: "color", Value: "Red"}}
+	count, _ := collection.Count(ctx, filter)
 	if cur, err = collection.Find(ctx, filter); err != nil {
 		t.Fatal(err)
 	}
-	total := 0
+	total := int64(0)
 	for cur.Next(ctx) {
 		cur.Decode(&doc)
 		total++
 	}
-	t.Log("total", total)
+	if total != count {
+		t.Fatal("find failed, expected", count, "but got", total)
+	}
 }
 
 func TestFindManyWithOptions(t *testing.T) {
@@ -59,22 +64,26 @@ func TestFindManyWithOptions(t *testing.T) {
 	client = getMongoClient()
 	seedCarsData(client, dbName)
 	collection = client.Database(dbName).Collection(collectionName)
+	limit := 3
 	filter := bson.D{}
+
+	// set options
 	opts := options.Find()
 	opts.SetBatchSize(int32(10))
-	opts.SetLimit(int64(2))
-	opts.SetSkip(int64(10))
+	opts.SetLimit(int64(limit))
+	opts.SetSkip(int64(20))
 	opts.SetProjection(bson.M{"_id": 0, "filters": 0})
+	opts.SetSort(bson.D{{Key: "brand", Value: 1}, {Key: "style", Value: -1}})
 	if cur, err = collection.Find(ctx, filter, opts); err != nil {
 		t.Fatal(err)
 	}
 	total := 0
 	for cur.Next(ctx) {
 		cur.Decode(&doc)
-		t.Log(doc)
+		t.Log(doc["brand"], doc["style"], doc["year"])
 		total++
 	}
-	if total != 2 {
-		t.Fatal("find failed, expected 2 but got", total)
+	if total != limit {
+		t.Fatal("find failed, expected", limit, "but got", total)
 	}
 }
