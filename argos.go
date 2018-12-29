@@ -37,7 +37,7 @@ func main() {
 
 	var pipeline = []bson.D{}
 	if *pipe != "" {
-		pipeline = mdb.GetAggregatePipeline(*pipe)
+		pipeline = mdb.MongoPipeline(*pipe)
 	}
 
 	stream := examples.NewChangeStream()

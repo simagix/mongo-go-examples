@@ -44,6 +44,7 @@ func TestFindMany(t *testing.T) {
 	if cur, err = collection.Find(ctx, filter); err != nil {
 		t.Fatal(err)
 	}
+	defer cur.Close(ctx)
 	total := int64(0)
 	for cur.Next(ctx) {
 		cur.Decode(&doc)
@@ -77,6 +78,7 @@ func TestFindManyWithOptions(t *testing.T) {
 	if cur, err = collection.Find(ctx, filter, opts); err != nil {
 		t.Fatal(err)
 	}
+	defer cur.Close(ctx)
 	total := 0
 	for cur.Next(ctx) {
 		cur.Decode(&doc)

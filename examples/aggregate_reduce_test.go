@@ -43,9 +43,10 @@ func TestAggregateMatch(t *testing.T) {
 	]`
 	collection = client.Database(dbName).Collection(collectionFavorites)
 	opts := options.Aggregate()
-	if cur, err = collection.Aggregate(ctx, mdb.GetAggregatePipeline(pipeline), opts); err != nil {
+	if cur, err = collection.Aggregate(ctx, mdb.MongoPipeline(pipeline), opts); err != nil {
 		t.Fatal(err)
 	}
+	defer cur.Close(ctx)
 	total := 0
 	for cur.Next(ctx) {
 		total++
@@ -97,9 +98,10 @@ func TestAggregateRedact(t *testing.T) {
 	]`
 	collection = client.Database(dbName).Collection(collectionFavorites)
 	opts := options.Aggregate()
-	if cur, err = collection.Aggregate(ctx, mdb.GetAggregatePipeline(pipeline), opts); err != nil {
+	if cur, err = collection.Aggregate(ctx, mdb.MongoPipeline(pipeline), opts); err != nil {
 		t.Fatal(err)
 	}
+	defer cur.Close(ctx)
 	total := 0
 	for cur.Next(ctx) {
 		total++
@@ -143,9 +145,10 @@ func TestAggregateFilter(t *testing.T) {
 	]`
 	collection = client.Database(dbName).Collection(collectionFavorites)
 	opts := options.Aggregate()
-	if cur, err = collection.Aggregate(ctx, mdb.GetAggregatePipeline(pipeline), opts); err != nil {
+	if cur, err = collection.Aggregate(ctx, mdb.MongoPipeline(pipeline), opts); err != nil {
 		t.Fatal(err)
 	}
+	defer cur.Close(ctx)
 	total := 0
 	for cur.Next(ctx) {
 		total++

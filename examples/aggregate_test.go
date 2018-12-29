@@ -32,9 +32,10 @@ func TestAggregate(t *testing.T) {
 	opts := options.Aggregate()
 	opts.SetAllowDiskUse(true)
 	opts.SetBatchSize(5)
-	if cur, err = collection.Aggregate(ctx, mdb.GetAggregatePipeline(pipeline), opts); err != nil {
+	if cur, err = collection.Aggregate(ctx, mdb.MongoPipeline(pipeline), opts); err != nil {
 		t.Fatal(err)
 	}
+	defer cur.Close(ctx)
 	total := 0
 	for cur.Next(ctx) {
 		cur.Decode(&doc)
