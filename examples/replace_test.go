@@ -4,7 +4,6 @@ package examples
 
 import (
 	"context"
-	"encoding/json"
 	"testing"
 	"time"
 
@@ -21,7 +20,7 @@ func TestReplaceOne(t *testing.T) {
 	var doc = bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta"}
 	var result *mongo.UpdateResult
 	client = getMongoClient()
-	collection = client.Database(dbName).Collection(collectionName)
+	collection = client.Database(dbName).Collection(collectionExamples)
 	if _, err = collection.InsertOne(ctx, doc); err != nil {
 		t.Fatal(err)
 	}
@@ -46,15 +45,13 @@ func TestReplaceLoop(t *testing.T) {
 	var result *mongo.UpdateResult
 	var ctx = context.Background()
 	var docs []interface{}
-	docs = append(docs, bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta", "year": 1998})
-	docs = append(docs, bson.M{"_id": primitive.NewObjectID(), "hometown": "Jacksonville", "year": 1990})
+	docs = append(docs, bson.M{"hometown": "Atlanta", "year": 1998})
+	docs = append(docs, bson.M{"hometown": "Jacksonville", "year": 1990})
 	client = getMongoClient()
-	collection = client.Database(dbName).Collection(collectionName)
+	collection = client.Database(dbName).Collection(collectionExamples)
 	if _, err = collection.InsertMany(ctx, docs); err != nil {
 		t.Fatal(err)
 	}
-	var update bson.M
-	json.Unmarshal([]byte(`{ "$set": {"year": 1998}}`), &update)
 	if cur, err = collection.Find(ctx, bson.M{"hometown": bson.M{"$exists": 1}}); err != nil {
 		t.Fatal(err)
 	}
