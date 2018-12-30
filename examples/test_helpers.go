@@ -30,13 +30,13 @@ func getMongoClient() *mongo.Client {
 	return client
 }
 
-func seedCarsData(client *mongo.Client, database string) {
+func seedCarsData(client *mongo.Client, database string) int64 {
 	var err error
 	var count int64
 	collection := client.Database(dbName).Collection(collectionName)
 	if count, err = collection.Count(context.Background(), nil); err != nil {
 		fmt.Println(err)
-		return
+		return 0
 	}
 	if count == 0 {
 		f := sim.NewFeeder()
@@ -45,16 +45,18 @@ func seedCarsData(client *mongo.Client, database string) {
 		f.SetDatabase(database)
 		f.SetShowProgress(false)
 		f.SeedCars(client)
+		return int64(100)
 	}
+	return count
 }
 
-func seedFavoritesData(client *mongo.Client, database string) {
+func seedFavoritesData(client *mongo.Client, database string) int64 {
 	var err error
 	var count int64
 	collection := client.Database(dbName).Collection(collectionFavorites)
 	if count, err = collection.Count(context.Background(), nil); err != nil {
 		fmt.Println(err)
-		return
+		return 0
 	}
 	if count == 0 {
 		f := sim.NewFeeder()
@@ -63,5 +65,7 @@ func seedFavoritesData(client *mongo.Client, database string) {
 		f.SetDatabase(database)
 		f.SetShowProgress(false)
 		f.SeedFavorites(client)
+		return int64(100)
 	}
+	return count
 }
