@@ -1,8 +1,22 @@
-# Argos
+# MongoDB mongo-go-driver and Change Streams  xamples
 
 A MongoDB Change Streams implementation using [mongodb-go-driver](https://github.com/mongodb/mongo-go-driver).
 
-## Demo
+## mongo-go-driver Examples
+Examples can be found at [examples](examples).
+
+- CURD
+- RunCommand
+- Aggregate
+  - $group
+  - $redact
+  - $filter
+  - $lookup
+  - $elemMatch
+- Transactions
+- Change Streams
+
+## Change Streams Demo
 
 Set up a replica set
 
@@ -37,4 +51,11 @@ argos --collection oplogs "mongodb://localhost:30097/argos?replicaSet=replset"
 ```
 argos --collection --pipeline '[{"$match": {"operationType": "update"}}]' \
   "mongodb://localhost:30097/argos?replicaSet=replset"
+```
+
+### Stream POC
+It would be nice mongo-go-drive can do stream.  See [POC](mongox/session_test.go) for an example.
+
+```
+client.Database("argos").Collection("cars").Find(ctx, filter).Project(project).Sort(sort).All(&docs)
 ```
