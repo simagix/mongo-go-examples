@@ -1,20 +1,20 @@
-# MongoDB mongo-go-driver and Change Streams  xamples
+# MongoDB mongo-go-driver and Change Streams Examples
 
 A MongoDB Change Streams implementation using [mongodb-go-driver](https://github.com/mongodb/mongo-go-driver).
 
 ## mongo-go-driver Examples
 Examples can be found at [examples](examples).
 
-- CURD
-- RunCommand
 - Aggregate
   - $group
   - $redact
   - $filter
   - $lookup
   - $elemMatch
-- Transactions
 - Change Streams
+- CRUD
+- RunCommand
+- Transactions
 
 ## Change Streams Demo
 
