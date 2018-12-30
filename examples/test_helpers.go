@@ -24,7 +24,6 @@ func getMongoClient() *mongo.Client {
 	if os.Getenv("DATABASE_URL") != "" {
 		uri = os.Getenv("DATABASE_URL")
 	}
-
 	if client, err = mongo.Connect(context.Background(), uri); err != nil {
 		panic(err)
 	}
