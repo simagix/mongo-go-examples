@@ -31,6 +31,11 @@ func getMongoClient() *mongo.Client {
 	return client
 }
 
+// SeedCarsData wraps seedCarsData
+func SeedCarsData(client *mongo.Client, database string) int64 {
+	return seedCarsData(client, database)
+}
+
 func seedCarsData(client *mongo.Client, database string) int64 {
 	var err error
 	var count int64
