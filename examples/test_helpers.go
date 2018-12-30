@@ -4,6 +4,7 @@ package examples
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 
@@ -68,4 +69,9 @@ func seedFavoritesData(client *mongo.Client, database string) int64 {
 		return int64(100)
 	}
 	return count
+}
+
+func stringify(doc interface{}) string {
+	b, _ := json.MarshalIndent(doc, "", "  ")
+	return string(b)
 }
