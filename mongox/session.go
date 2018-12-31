@@ -32,8 +32,8 @@ func (s *Session) Sort(sort interface{}) *Session {
 	return s
 }
 
-// All returns all docs
-func (s *Session) All(result interface{}) error {
+// Decode returns all docs
+func (s *Session) Decode(result interface{}) error {
 	opts := options.Find()
 	if s.sort != nil {
 		opts.SetSort(s.sort)

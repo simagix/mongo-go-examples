@@ -30,7 +30,10 @@ func TestFindSort(t *testing.T) {
 	sort := bson.D{{Key: "style", Value: -1}}
 	project := bson.D{{Key: "_id", Value: 0}, {Key: "style", Value: 1}, {Key: "brand", Value: 1}, {Key: "dealer", Value: 1}}
 	var docs []bson.M
-	client.Database("argos").Collection("cars").Find(ctx, filter).Project(project).Sort(sort).All(&docs)
+	err = client.Database("argos").Collection("cars").Find(filter).Project(project).Sort(sort).Decode(&docs)
+	if err != nil {
+		t.Fatal(err)
+	}
 	t.Log(stringify(docs, "", "  "))
 }
 

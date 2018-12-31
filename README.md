@@ -57,5 +57,5 @@ argos --collection --pipeline '[{"$match": {"operationType": "update"}}]' \
 It would be nice mongo-go-drive can do stream.  See [POC](mongox/session_test.go) for an example.
 
 ```
-client.Database("argos").Collection("cars").Find(ctx, filter).Project(project).Sort(sort).All(&docs)
+client.Database(db).Collection(collection).Find(filter).Project(project).Sort(sort).Decode(&docs)
 ```
