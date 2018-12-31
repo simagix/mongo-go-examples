@@ -10,6 +10,7 @@ import (
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"github.com/mongodb/mongo-go-driver/mongo"
+	"github.com/mongodb/mongo-go-driver/mongo/options"
 )
 
 func TestReplaceOne(t *testing.T) {
@@ -69,5 +70,40 @@ func TestReplaceLoop(t *testing.T) {
 	res, _ := collection.DeleteMany(ctx, bson.M{"hometown": bson.M{"$exists": 1}})
 	if res.DeletedCount != int64(len(docs)) {
 		t.Fatal("replace failed, expected", len(docs), "but got", res.DeletedCount)
+	}
+}
+
+func TestFindOneAndReplace(t *testing.T) {
+	var err error
+	var client *mongo.Client
+	var collection *mongo.Collection
+	var ctx = context.Background()
+	year := int32(time.Now().Year())
+	var doc = bson.M{"hometown": "Atlanta", "year": int32(1998)}
+	var docs []interface{}
+	for i := 0; i < 3; i++ {
+		docs = append(docs, doc)
+	}
+	client = getMongoClient()
+	collection = client.Database(dbName).Collection(collectionExamples)
+	if _, err = collection.InsertMany(ctx, docs); err != nil {
+		t.Fatal(err)
+	}
+	doc["year"] = year
+	opts := options.FindOneAndReplace()
+	if err = collection.FindOneAndReplace(ctx, bson.M{"hometown": "Atlanta"}, doc, opts).Decode(&doc); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = collection.FindOne(ctx, bson.M{"_id": doc["_id"]}).Decode(&doc); err != nil {
+		t.Fatal(err)
+	}
+	if doc["year"] != year {
+		t.Fatal("expected", year, "but got", doc["year"])
+	}
+
+	res, _ := collection.DeleteMany(ctx, bson.M{"hometown": "Atlanta"})
+	if res.DeletedCount != int64(len(docs)) {
+		t.Fatal("delete failed, expected 1 but got", res.DeletedCount)
 	}
 }
