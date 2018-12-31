@@ -26,15 +26,22 @@ func TestFindSort(t *testing.T) {
 		t.Fatal(err)
 	}
 	seed()
+	c := client.Database("argos").Collection("cars")
 	filter := bson.D{{Key: "color", Value: "Red"}}
 	sort := bson.D{{Key: "style", Value: -1}}
 	project := bson.D{{Key: "_id", Value: 0}, {Key: "style", Value: 1}, {Key: "brand", Value: 1}, {Key: "dealer", Value: 1}}
 	var docs []bson.M
-	err = client.Database("argos").Collection("cars").Find(filter).Project(project).Sort(sort).Decode(&docs)
-	if err != nil {
+	if err = c.Find(filter).Project(project).Sort(sort).Limit(2).Decode(&docs); err != nil {
 		t.Fatal(err)
 	}
 	t.Log(stringify(docs, "", "  "))
+	var result []bson.M
+	filter = bson.D{{Key: "style", Value: "Truck"}}
+	project = bson.D{{Key: "_id", Value: 0}, {Key: "color", Value: 1}, {Key: "brand", Value: 1}, {Key: "dealer", Value: 1}}
+	if err = c.Find(filter).Project(project).Skip(10).Limit(3).Decode(&result); err != nil {
+		t.Fatal(err)
+	}
+	t.Log(stringify(result, "", "  "))
 }
 
 func stringify(doc interface{}, opts ...string) string {

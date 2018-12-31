@@ -3,7 +3,6 @@
 package mongox
 
 import (
-	"context"
 	"encoding/json"
 
 	"github.com/globalsign/mgo/bson"
@@ -14,15 +13,28 @@ import (
 // Session -
 type Session struct {
 	collection *mongo.Collection
-	ctx        context.Context
 	filter     interface{}
+	limit      int64
 	project    interface{}
+	skip       int64
 	sort       interface{}
+}
+
+// Limit sets sorting
+func (s *Session) Limit(limit int64) *Session {
+	s.limit = limit
+	return s
 }
 
 // Project sets sorting
 func (s *Session) Project(project interface{}) *Session {
 	s.project = project
+	return s
+}
+
+// Skip sets sorting
+func (s *Session) Skip(skip int64) *Session {
+	s.skip = skip
 	return s
 }
 
@@ -35,19 +47,25 @@ func (s *Session) Sort(sort interface{}) *Session {
 // Decode returns all docs
 func (s *Session) Decode(result interface{}) error {
 	opts := options.Find()
-	if s.sort != nil {
-		opts.SetSort(s.sort)
+	if s.limit > 0 {
+		opts.SetLimit(s.limit)
 	}
 	if s.project != nil {
 		opts.SetProjection(s.project)
 	}
-	cur, err := s.collection.Find(s.ctx, s.filter, opts)
+	if s.skip > 0 {
+		opts.SetSkip(s.skip)
+	}
+	if s.sort != nil {
+		opts.SetSort(s.sort)
+	}
+	cur, err := s.collection.Find(nil, s.filter, opts)
 	if err != nil {
 		return err
 	}
 
 	var docs []bson.M
-	for cur.Next(s.ctx) {
+	for cur.Next(nil) {
 		var doc bson.M
 		cur.Decode(&doc)
 		docs = append(docs, doc)
