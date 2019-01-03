@@ -26,15 +26,18 @@ func TestAggregateGroup(t *testing.T) {
 	client = getMongoClient()
 	total := seedCarsData(client, dbName)
 
-	pipeline := `[
-	{
+	pipeline := `
+	[{
 		"$group": {
-		  "_id": "$style",
-		  "brand": {
-		    "$addToSet": "$brand"
-		  },
-		  "count": {"$sum": 1}
-	}}]`
+			"_id": "$style",
+			"brand": {
+				"$addToSet": "$brand"
+			},
+			"count": {
+				"$sum": 1
+			}
+		}
+	}]`
 	collection = client.Database(dbName).Collection(collectionName)
 	opts := options.Aggregate()
 	if cur, err = collection.Aggregate(ctx, mdb.MongoPipeline(pipeline), opts); err != nil {

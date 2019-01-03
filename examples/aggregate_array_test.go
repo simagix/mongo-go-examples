@@ -27,32 +27,35 @@ func TestAggregateArray(t *testing.T) {
 	client = getMongoClient()
 	seedFavoritesData(client, dbName)
 
-	pipeline := `[
-		{
-			"$match": {
-			  "favoritesList": {
-			    "$elemMatch": {
-			      "city": "London",
-			      "book": "Journey to the West"
-			    }
-			  }
-		}}, {
-			"$project": {
-		     "favoritesList": {
-		        "$filter": {
-		          "input": "$favoritesList",
-		          "as": "favorite",
-		          "cond": {
-		            "$eq": ["$$favorite.book", "Journey to the West"]
-		          }
-		        }
-		      },
-		      "_id": 0,
-		      "email": 1
-		}}, {
-			"$unwind": {
-        "path": "$favoritesList"
-    }}]`
+	pipeline := `
+	[{
+		"$match": {
+			"favoritesList": {
+				"$elemMatch": {
+					"city": "London",
+					"book": "Journey to the West"
+				}
+			}
+		}
+	}, {
+		"$project": {
+			"favoritesList": {
+				"$filter": {
+					"input": "$favoritesList",
+					"as": "favorite",
+					"cond": {
+						"$eq": ["$$favorite.book", "Journey to the West"]
+					}
+				}
+			},
+			"_id": 0,
+			"email": 1
+		}
+	}, {
+		"$unwind": {
+			"path": "$favoritesList"
+		}
+	}]`
 	collection = client.Database(dbName).Collection(collectionFavorites)
 	opts := options.Aggregate()
 	if cur, err = collection.Aggregate(ctx, mdb.MongoPipeline(pipeline), opts); err != nil {

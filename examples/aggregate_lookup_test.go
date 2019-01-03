@@ -26,46 +26,43 @@ func TestAggregateLookup(t *testing.T) {
 	client = getMongoClient()
 	total := seedCarsData(client, dbName)
 
-	pipeline := `[
-    {
-        "$group": {
-            "_id": {
-                "dealer": "$dealer",
-                "style": "$style"
-            },
-            "brand": {
-                "$addToSet": "$brand"
-            },
-            "count": {
-                "$sum": 1
-            }
-        }
-    }, {
-        "$lookup": {
-            "as": "dealer",
-            "from": "dealers",
-            "let": {
-                "dealerId": "$_id.dealer"
-            },
-            "pipeline": [
-                {
-                    "$match": {
-                        "$expr": {
-                            "$eq": [
-                                "$_id", "$$dealerId"
-                            ]
-                        }
-                    }
-                }, {
-                    "$project": {
-                        "_id": 0,
-                        "name": 1
-                    }
-                }
-            ]
-        }
-    }
-	]`
+	pipeline := `
+	[{
+		"$group": {
+			"_id": {
+				"dealer": "$dealer",
+				"style": "$style"
+			},
+			"brand": {
+				"$addToSet": "$brand"
+			},
+			"count": {
+				"$sum": 1
+			}
+		}
+	}, {
+		"$lookup": {
+			"as": "dealer",
+			"from": "dealers",
+			"let": {
+				"dealerId": "$_id.dealer"
+			},
+			"pipeline": [{
+				"$match": {
+					"$expr": {
+						"$eq": [
+							"$_id", "$$dealerId"
+						]
+					}
+				}
+			}, {
+				"$project": {
+					"_id": 0,
+					"name": 1
+				}
+			}]
+		}
+	}]`
 	collection = client.Database(dbName).Collection(collectionName)
 	opts := options.Aggregate()
 	if cur, err = collection.Aggregate(ctx, mdb.MongoPipeline(pipeline), opts); err != nil {
