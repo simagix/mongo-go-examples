@@ -29,6 +29,10 @@
   branch = "master"
   name = "github.com/mongodb/mongo-go-driver"
 
+[[constraint]]
+  branch = "master"
+  name = "github.com/simagix/keyhole"
+
 [prune]
   go-tests = true
   unused-packages = true
