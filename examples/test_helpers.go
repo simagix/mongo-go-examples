@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/simagix/keyhole/sim"
 )
@@ -40,8 +41,9 @@ func seedCarsData(client *mongo.Client, database string) int64 {
 	var err error
 	var count int64
 	collection := client.Database(dbName).Collection(collectionName)
-	if count, err = collection.Count(context.Background(), nil); err != nil {
-		fmt.Println(err)
+	filter := bson.D{{}}
+	if count, err = collection.Count(context.Background(), filter); err != nil {
+		fmt.Println("===>", err)
 		return 0
 	}
 	if count == 0 {
@@ -60,7 +62,8 @@ func seedFavoritesData(client *mongo.Client, database string) int64 {
 	var err error
 	var count int64
 	collection := client.Database(dbName).Collection(collectionFavorites)
-	if count, err = collection.Count(context.Background(), nil); err != nil {
+	filter := bson.D{{}}
+	if count, err = collection.Count(context.Background(), filter); err != nil {
 		fmt.Println(err)
 		return 0
 	}
