@@ -1,11 +1,13 @@
 # mongo-go-driver Examples
 
-- TestAggregate
 - TestAggregateArray
 - TestAggregateFilter
+- TestAggregateGraphLookup
 - TestAggregateGroup
+- TestAggregateJSON
 - TestAggregateLookup
 - TestAggregateMatch
+- TestAggregatePipeline
 - TestAggregateRedact
 - TestChangeStreamClient
 - TestChangeStreamCollection
