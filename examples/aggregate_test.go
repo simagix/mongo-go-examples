@@ -18,7 +18,6 @@ func TestAggregateJSON(t *testing.T) {
 	var collection *mongo.Collection
 	var cur mongo.Cursor
 	var ctx = context.Background()
-	var doc bson.M
 
 	client = getMongoClient()
 	seedCarsData(client, dbName)
@@ -29,6 +28,10 @@ func TestAggregateJSON(t *testing.T) {
 		{"$project": { "brand": "$_id", "_id": 0, "count": 1 }}
 	]`
 	collection = client.Database(dbName).Collection(collectionName)
+	var brands []interface{}
+	if brands, err = collection.Distinct(ctx, "brand", bson.D{{Key: "color", Value: "Red"}}); err != nil {
+		t.Fatal(err)
+	}
 	opts := options.Aggregate()
 	opts.SetAllowDiskUse(true)
 	opts.SetBatchSize(5)
@@ -38,11 +41,11 @@ func TestAggregateJSON(t *testing.T) {
 	defer cur.Close(ctx)
 	total := 0
 	for cur.Next(ctx) {
-		cur.Decode(&doc)
-		t.Log(doc)
 		total++
 	}
-	t.Log("total", total)
+	if total == 0 || total != len(brands) {
+		t.Fatal("expected", len(brands), "but got", total)
+	}
 }
 
 func TestAggregatePipeline(t *testing.T) {
@@ -51,7 +54,6 @@ func TestAggregatePipeline(t *testing.T) {
 	var collection *mongo.Collection
 	var cur mongo.Cursor
 	var ctx = context.Background()
-	var doc bson.M
 
 	client = getMongoClient()
 	seedCarsData(client, dbName)
@@ -68,6 +70,10 @@ func TestAggregatePipeline(t *testing.T) {
 		{{Key: "$project", Value: bson.D{{Key: "brand", Value: "$_id"}, {Key: "_id", Value: 0}, {Key: "count", Value: 1}}}},
 	}
 	collection = client.Database(dbName).Collection(collectionName)
+	var brands []interface{}
+	if brands, err = collection.Distinct(ctx, "brand", bson.D{{Key: "color", Value: "Red"}}); err != nil {
+		t.Fatal(err)
+	}
 	opts := options.Aggregate()
 	opts.SetAllowDiskUse(true)
 	opts.SetBatchSize(5)
@@ -77,9 +83,9 @@ func TestAggregatePipeline(t *testing.T) {
 	defer cur.Close(ctx)
 	total := 0
 	for cur.Next(ctx) {
-		cur.Decode(&doc)
-		t.Log(doc)
 		total++
 	}
-	t.Log("total", total)
+	if total == 0 || total != len(brands) {
+		t.Fatal("expected", len(brands), "but got", total)
+	}
 }
