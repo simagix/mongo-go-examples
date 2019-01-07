@@ -12,7 +12,7 @@ import (
 	"github.com/simagix/keyhole/mdb"
 )
 
-func TestAggregate(t *testing.T) {
+func TestAggregateJSON(t *testing.T) {
 	var err error
 	var client *mongo.Client
 	var collection *mongo.Collection
@@ -33,6 +33,45 @@ func TestAggregate(t *testing.T) {
 	opts.SetAllowDiskUse(true)
 	opts.SetBatchSize(5)
 	if cur, err = collection.Aggregate(ctx, mdb.MongoPipeline(pipeline), opts); err != nil {
+		t.Fatal(err)
+	}
+	defer cur.Close(ctx)
+	total := 0
+	for cur.Next(ctx) {
+		cur.Decode(&doc)
+		t.Log(doc)
+		total++
+	}
+	t.Log("total", total)
+}
+
+func TestAggregatePipeline(t *testing.T) {
+	var err error
+	var client *mongo.Client
+	var collection *mongo.Collection
+	var cur mongo.Cursor
+	var ctx = context.Background()
+	var doc bson.M
+
+	client = getMongoClient()
+	seedCarsData(client, dbName)
+
+	// this cause warning from go vet
+	// pipeline := mongo.Pipeline{
+	// 	{{"$match", bson.D{{"color", "Red"}}}},
+	// 	{{"$group", bson.D{{"_id", "$brand"}, {"count", bson.D{{"$sum", 1}}}}}},
+	// 	{{"$project", bson.D{{"brand", "$_id"}, {"_id", 0}, {"count", 1}}}},
+	// }
+	pipeline := mongo.Pipeline{
+		{{Key: "$match", Value: bson.D{{Key: "color", Value: "Red"}}}},
+		{{Key: "$group", Value: bson.D{{Key: "_id", Value: "$brand"}, {Key: "count", Value: bson.D{{Key: "$sum", Value: 1}}}}}},
+		{{Key: "$project", Value: bson.D{{Key: "brand", Value: "$_id"}, {Key: "_id", Value: 0}, {Key: "count", Value: 1}}}},
+	}
+	collection = client.Database(dbName).Collection(collectionName)
+	opts := options.Aggregate()
+	opts.SetAllowDiskUse(true)
+	opts.SetBatchSize(5)
+	if cur, err = collection.Aggregate(ctx, pipeline, opts); err != nil {
 		t.Fatal(err)
 	}
 	defer cur.Close(ctx)
