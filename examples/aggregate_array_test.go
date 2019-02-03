@@ -70,3 +70,79 @@ func TestAggregateArray(t *testing.T) {
 	}
 	t.Log("total", total)
 }
+
+func TestAggregateConcatArrays(t *testing.T) {
+	var err error
+	var client *mongo.Client
+	var collection *mongo.Collection
+	var cur mongo.Cursor
+	var ctx = context.Background()
+	var doc bson.M
+	client = getMongoClient()
+	seeded := seedFavoritesData(client, dbName)
+
+	pipeline := `
+	[{
+		'$project': {
+			'name': {
+				'$concat': [
+					'$firstName', ' ', '$lastName'
+				]
+			},
+			'books': {
+				'$map': {
+					'input': '$favoritesKVList',
+					'as': 'fa',
+					'in': {
+						'$filter': {
+							'input': '$$fa.categories',
+							'as': 'fa',
+							'cond': {
+								'$eq': [
+									'$$fa.key', 'book'
+								]
+							}
+						}
+					}
+				}
+			}
+		}
+	}, {
+		'$project': {
+			'name': 1,
+			'books': {
+				'$reduce': {
+					'input': '$books',
+					'initialValue': [],
+					'in': {
+						'$concatArrays': [
+							'$$value', '$$this'
+						]
+					}
+				}
+			}
+		}
+	}, {
+		'$project': {
+			'_id': 0,
+			'name': 1,
+			'books': '$books.value'
+		}
+	}]`
+
+	collection = client.Database(dbName).Collection(collectionFavorites)
+	opts := options.Aggregate()
+	if cur, err = collection.Aggregate(ctx, mdb.MongoPipeline(pipeline), opts); err != nil {
+		t.Fatal(err)
+	}
+	defer cur.Close(ctx)
+	total := 0
+	for cur.Next(ctx) {
+		cur.Decode(&doc)
+		total++
+	}
+
+	if seeded != int64(total) {
+		t.Fatal("expected", seeded, "but got", total)
+	}
+}
