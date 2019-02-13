@@ -15,7 +15,7 @@ func TestAggregateMatch(t *testing.T) {
 	var err error
 	var client *mongo.Client
 	var collection *mongo.Collection
-	var cur mongo.Cursor
+	var cur *mongo.Cursor
 	var ctx = context.Background()
 
 	client = getMongoClient()
@@ -57,7 +57,7 @@ func TestAggregateRedact(t *testing.T) {
 	var err error
 	var client *mongo.Client
 	var collection *mongo.Collection
-	var cur mongo.Cursor
+	var cur *mongo.Cursor
 	var ctx = context.Background()
 
 	client = getMongoClient()
@@ -112,7 +112,7 @@ func TestAggregateFilter(t *testing.T) {
 	var err error
 	var client *mongo.Client
 	var collection *mongo.Collection
-	var cur mongo.Cursor
+	var cur *mongo.Cursor
 	var ctx = context.Background()
 
 	client = getMongoClient()

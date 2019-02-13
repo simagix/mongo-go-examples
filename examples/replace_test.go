@@ -42,7 +42,7 @@ func TestReplaceLoop(t *testing.T) {
 	var err error
 	var client *mongo.Client
 	var collection *mongo.Collection
-	var cur mongo.Cursor
+	var cur *mongo.Cursor
 	var result *mongo.UpdateResult
 	var ctx = context.Background()
 	var docs []interface{}

@@ -45,7 +45,7 @@ func NewChangeStream() *ChangeStream {
 func (cs *ChangeStream) Watch(client *mongo.Client, cb callback) {
 	var err error
 	var ctx = context.Background()
-	var cur mongo.Cursor
+	var cur *mongo.ChangeStream
 	fmt.Println("pipeline", cs.pipeline)
 	opts := options.ChangeStream()
 	opts.SetFullDocument("updateLookup")
