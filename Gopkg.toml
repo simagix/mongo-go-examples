@@ -26,11 +26,11 @@
 
 
 [[constraint]]
-  branch = "master"
+  version = "v0.3.0"
   name = "github.com/mongodb/mongo-go-driver"
 
 [[constraint]]
-  branch = "master"
+  version = "v0.3.0"
   name = "github.com/simagix/keyhole"
 
 [prune]
