@@ -6,9 +6,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/mongo"
-	"github.com/mongodb/mongo-go-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func TestFindOne(t *testing.T) {
@@ -40,7 +40,7 @@ func TestFindMany(t *testing.T) {
 	seedCarsData(client, dbName)
 	collection = client.Database(dbName).Collection(collectionName)
 	filter := bson.D{{Key: "color", Value: "Red"}}
-	count, _ := collection.Count(ctx, filter)
+	count, _ := collection.CountDocuments(ctx, filter)
 	if cur, err = collection.Find(ctx, filter); err != nil {
 		t.Fatal(err)
 	}

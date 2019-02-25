@@ -26,11 +26,11 @@
 
 
 [[constraint]]
-  version = "v0.3.0"
-  name = "github.com/mongodb/mongo-go-driver"
+  version = "v1.0.0-rc1"
+  name = "go.mongodb.org/mongo-driver"
 
 [[constraint]]
-  version = "v0.3.0"
+  version = "v1.0.0-rc1"
   name = "github.com/simagix/keyhole"
 
 [prune]

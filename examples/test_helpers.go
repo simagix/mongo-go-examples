@@ -8,9 +8,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/simagix/keyhole/sim"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const dbName = "argos"
@@ -22,11 +23,11 @@ func getMongoClient() *mongo.Client {
 	var err error
 	var client *mongo.Client
 
-	uri := "mongodb://localhost/argos?replicaSet=replset"
+	uri := "mongodb://localhost/argos?replicaSet=replset&authSource=admin"
 	if os.Getenv("DATABASE_URL") != "" {
 		uri = os.Getenv("DATABASE_URL")
 	}
-	if client, err = mongo.Connect(context.Background(), uri); err != nil {
+	if client, err = mongo.Connect(context.Background(), options.Client().ApplyURI(uri)); err != nil {
 		panic(err)
 	}
 	return client
@@ -42,7 +43,7 @@ func seedCarsData(client *mongo.Client, database string) int64 {
 	var count int64
 	collection := client.Database(dbName).Collection(collectionName)
 	filter := bson.D{{}}
-	if count, err = collection.Count(context.Background(), filter); err != nil {
+	if count, err = collection.CountDocuments(context.Background(), filter); err != nil {
 		fmt.Println("===>", err)
 		return 0
 	}
@@ -63,7 +64,7 @@ func seedFavoritesData(client *mongo.Client, database string) int64 {
 	var count int64
 	collection := client.Database(dbName).Collection(collectionFavorites)
 	filter := bson.D{{}}
-	if count, err = collection.Count(context.Background(), filter); err != nil {
+	if count, err = collection.CountDocuments(context.Background(), filter); err != nil {
 		fmt.Println(err)
 		return 0
 	}

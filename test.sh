@@ -12,7 +12,7 @@ sleep 2
 # Case 1: prints all oplogs
 # Case 2: print only updates
 #   '[{"$match": {"operationType": "update"}}]'
-export DATABASE_URL="mongodb://localhost:30097/argos?replicaSet=replset"
+export DATABASE_URL="mongodb://localhost:30097/argos?replicaSet=replset&authSource=admin"
 GOCACHE=off go test ./... -v
 
 echo ; echo "Shutdown mongod"

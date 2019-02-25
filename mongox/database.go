@@ -2,7 +2,7 @@
 
 package mongox
 
-import "github.com/mongodb/mongo-go-driver/mongo"
+import "go.mongodb.org/mongo-driver/mongo"
 
 // Database contains mongo.Database
 type Database struct {

@@ -7,15 +7,16 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/simagix/mongo-go-examples/examples"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var uri = "mongodb://localhost/argos?replicaSet=replset"
+var uri = "mongodb://localhost/argos?replicaSet=replset&authSource=admin"
 
 func seed() {
-	client, _ := mongo.Connect(context.Background(), uri)
+	client, _ := mongo.Connect(context.Background(), options.Client().ApplyURI(uri))
 	examples.SeedCarsData(client, "argos")
 }
 

@@ -5,7 +5,8 @@ package mongox
 import (
 	"context"
 
-	"github.com/mongodb/mongo-go-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // Client contains mongo.Client
@@ -17,7 +18,7 @@ type Client struct {
 func Connect(ctx context.Context, uri string) (*Client, error) {
 	var err error
 	var client *mongo.Client
-	client, err = mongo.Connect(ctx, uri)
+	client, err = mongo.Connect(ctx, options.Client().ApplyURI(uri))
 	return &Client{client: client}, err
 }
 
