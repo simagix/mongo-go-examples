@@ -7,11 +7,11 @@ import (
 	"flag"
 	"fmt"
 
+	"github.com/simagix/keyhole/mdb"
+	"github.com/simagix/mongo-go-examples/examples"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/x/network/connstring"
-	"github.com/simagix/keyhole/mdb"
-	"github.com/simagix/mongo-go-examples/examples"
 )
 
 func main() {
@@ -27,11 +27,15 @@ func main() {
 	flagset := make(map[string]bool)
 	flag.Visit(func(f *flag.Flag) { flagset[f.Name] = true })
 
-	if connStr, err = connstring.Parse(flag.Arg(0)); err != nil {
+	var uri string
+	if uri, err = mdb.Parse(flag.Arg(0)); err != nil {
 		panic(err)
 	}
 
-	if client, err = mdb.NewMongoClient(flag.Arg(0), *caFile, *clientPEMFile); err != nil {
+	if connStr, err = connstring.Parse(uri); err != nil {
+		panic(err)
+	}
+	if client, err = mdb.NewMongoClient(uri, *caFile, *clientPEMFile); err != nil {
 		panic(err)
 	}
 
