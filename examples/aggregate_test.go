@@ -6,10 +6,10 @@ import (
 	"context"
 	"testing"
 
+	"github.com/simagix/keyhole/mdb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"github.com/simagix/keyhole/mdb"
 )
 
 func TestAggregateJSON(t *testing.T) {
@@ -87,5 +87,30 @@ func TestAggregatePipeline(t *testing.T) {
 	}
 	if total == 0 || total != len(brands) {
 		t.Fatal("expected", len(brands), "but got", total)
+	}
+}
+
+func TestAggregateBSOND(t *testing.T) {
+	var err error
+	var client *mongo.Client
+	var collection *mongo.Collection
+	var cur *mongo.Cursor
+	var ctx = context.Background()
+	size := 10
+	client = getMongoClient()
+	seedCarsData(client, dbName)
+	pipeline := []bson.D{bson.D{{"$sample", bson.D{{"size", size}}}}}
+	collection = client.Database(dbName).Collection(collectionName)
+	opts := options.Aggregate()
+	if cur, err = collection.Aggregate(ctx, pipeline, opts); err != nil {
+		t.Fatal(err)
+	}
+	defer cur.Close(ctx)
+	total := 0
+	for cur.Next(ctx) {
+		total++
+	}
+	if total == 0 {
+		t.Fatal("expected ", size, "but got", total)
 	}
 }
