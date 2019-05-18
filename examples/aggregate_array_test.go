@@ -6,10 +6,10 @@ import (
 	"context"
 	"testing"
 
+	"github.com/simagix/keyhole/mdb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"github.com/simagix/keyhole/mdb"
 )
 
 /*
@@ -25,6 +25,7 @@ func TestAggregateArray(t *testing.T) {
 	var doc bson.M
 
 	client = getMongoClient()
+	defer client.Disconnect(ctx)
 	seedFavoritesData(client, dbName)
 
 	pipeline := `
@@ -79,6 +80,7 @@ func TestAggregateConcatArrays(t *testing.T) {
 	var ctx = context.Background()
 	var doc bson.M
 	client = getMongoClient()
+	defer client.Disconnect(ctx)
 	seeded := seedFavoritesData(client, dbName)
 
 	pipeline := `

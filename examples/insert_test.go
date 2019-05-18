@@ -21,6 +21,7 @@ func TestInsertOne(t *testing.T) {
 	var doc = bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta"}
 	var result *mongo.InsertOneResult
 	client = getMongoClient()
+	defer client.Disconnect(ctx)
 	collection = client.Database(dbName).Collection(collectionName)
 	if result, err = collection.InsertOne(ctx, doc); err != nil {
 		t.Fatal(err)
@@ -40,6 +41,7 @@ func TestInsertOneWithOptions(t *testing.T) {
 	var doc = bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta"}
 	var result *mongo.InsertOneResult
 	client = getMongoClient()
+	defer client.Disconnect(ctx)
 	opts := options.Collection()
 	opts.SetWriteConcern(writeconcern.New(writeconcern.WMajority()))
 	collection = client.Database(dbName).Collection(collectionName, opts)
@@ -62,6 +64,7 @@ func TestInsertMany(t *testing.T) {
 	docs = append(docs, bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta", "counter": 2})
 	var result *mongo.InsertManyResult
 	client = getMongoClient()
+	defer client.Disconnect(ctx)
 	collection = client.Database(dbName).Collection(collectionName)
 	if result, err = collection.InsertMany(ctx, docs); err != nil {
 		t.Fatal(err)

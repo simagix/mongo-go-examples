@@ -17,6 +17,7 @@ func TestCountDocuments(t *testing.T) {
 	var ctx = context.Background()
 	var count int64
 	client = getMongoClient()
+	defer client.Disconnect(ctx)
 	seedCarsData(client, dbName)
 	collection = client.Database(dbName).Collection(collectionName)
 	filter := bson.D{{Key: "color", Value: "Red"}}

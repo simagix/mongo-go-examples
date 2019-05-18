@@ -9,11 +9,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/simagix/keyhole/mdb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/x/network/connstring"
-	"github.com/simagix/keyhole/mdb"
 )
 
 var collection = "oplogs"
@@ -35,6 +35,7 @@ func TestChangeStreamClient(t *testing.T) {
 		t.Fatal(err)
 	}
 	client = getMongoClient()
+	defer client.Disconnect(ctx)
 	var pipeline []bson.D
 	pipeline = mongo.Pipeline{}
 	c := client.Database(cs.Database).Collection(collection)

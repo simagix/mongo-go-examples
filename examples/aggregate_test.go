@@ -20,6 +20,7 @@ func TestAggregateJSON(t *testing.T) {
 	var ctx = context.Background()
 
 	client = getMongoClient()
+	defer client.Disconnect(ctx)
 	seedCarsData(client, dbName)
 
 	pipeline := `[

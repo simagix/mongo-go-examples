@@ -21,6 +21,7 @@ func TestReplaceOne(t *testing.T) {
 	var doc = bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta"}
 	var result *mongo.UpdateResult
 	client = getMongoClient()
+	defer client.Disconnect(ctx)
 	collection = client.Database(dbName).Collection(collectionExamples)
 	if _, err = collection.InsertOne(ctx, doc); err != nil {
 		t.Fatal(err)
@@ -49,6 +50,7 @@ func TestReplaceLoop(t *testing.T) {
 	docs = append(docs, bson.M{"hometown": "Atlanta", "year": 1998})
 	docs = append(docs, bson.M{"hometown": "Jacksonville", "year": 1990})
 	client = getMongoClient()
+	defer client.Disconnect(ctx)
 	collection = client.Database(dbName).Collection(collectionExamples)
 	if _, err = collection.InsertMany(ctx, docs); err != nil {
 		t.Fatal(err)
@@ -85,6 +87,7 @@ func TestFindOneAndReplace(t *testing.T) {
 		docs = append(docs, doc)
 	}
 	client = getMongoClient()
+	defer client.Disconnect(ctx)
 	collection = client.Database(dbName).Collection(collectionExamples)
 	if _, err = collection.InsertMany(ctx, docs); err != nil {
 		t.Fatal(err)

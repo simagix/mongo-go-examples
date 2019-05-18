@@ -18,6 +18,7 @@ func TestFindOne(t *testing.T) {
 	var ctx = context.Background()
 	var doc bson.M
 	client = getMongoClient()
+	defer client.Disconnect(ctx)
 	seedCarsData(client, dbName)
 	collection = client.Database(dbName).Collection(collectionName)
 	filter := bson.D{{Key: "color", Value: "Red"}}
@@ -37,6 +38,7 @@ func TestFindMany(t *testing.T) {
 	var ctx = context.Background()
 	var doc bson.M
 	client = getMongoClient()
+	defer client.Disconnect(ctx)
 	seedCarsData(client, dbName)
 	collection = client.Database(dbName).Collection(collectionName)
 	filter := bson.D{{Key: "color", Value: "Red"}}
@@ -63,6 +65,7 @@ func TestFindManyWithOptions(t *testing.T) {
 	var ctx = context.Background()
 	var doc bson.M
 	client = getMongoClient()
+	defer client.Disconnect(ctx)
 	seedCarsData(client, dbName)
 	collection = client.Database(dbName).Collection(collectionName)
 	limit := 3

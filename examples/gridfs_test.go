@@ -5,6 +5,7 @@ package examples
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"testing"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -21,6 +22,7 @@ func TestGridFS(t *testing.T) {
 
 	str := "This is a test file"
 	client = getMongoClient()
+	defer client.Disconnect(context.Background())
 
 	if bucket, err = gridfs.NewBucket(client.Database(dbName), options.GridFSBucket().SetName("myFiles")); err != nil {
 		t.Fatal(err)

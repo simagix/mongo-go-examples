@@ -6,9 +6,9 @@ import (
 	"context"
 	"testing"
 
+	"github.com/simagix/keyhole/mdb"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"github.com/simagix/keyhole/mdb"
 )
 
 func TestAggregateMatch(t *testing.T) {
@@ -19,6 +19,7 @@ func TestAggregateMatch(t *testing.T) {
 	var ctx = context.Background()
 
 	client = getMongoClient()
+	defer client.Disconnect(ctx)
 	seedFavoritesData(client, dbName)
 
 	pipeline := `

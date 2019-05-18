@@ -22,6 +22,7 @@ func TestTransactionCommit(t *testing.T) {
 	var session mongo.Session
 	var update = bson.D{{Key: "$set", Value: bson.D{{Key: "year", Value: int32(2000)}}}}
 	client = getMongoClient()
+	defer client.Disconnect(ctx)
 	collection = client.Database(dbName).Collection(collectionExamples)
 	if _, err = collection.InsertOne(ctx, doc); err != nil {
 		t.Fatal(err)
@@ -76,6 +77,7 @@ func TestTransactionAbort(t *testing.T) {
 	var session mongo.Session
 	var update = bson.D{{Key: "$set", Value: bson.D{{Key: "year", Value: int32(2000)}}}}
 	client = getMongoClient()
+	defer client.Disconnect(ctx)
 	collection = client.Database(dbName).Collection(collectionExamples)
 	if _, err = collection.InsertOne(ctx, doc); err != nil {
 		t.Fatal(err)

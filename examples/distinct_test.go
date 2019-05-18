@@ -17,6 +17,7 @@ func TestDistinct(t *testing.T) {
 	var cur *mongo.Cursor
 	var ctx = context.Background()
 	client = getMongoClient()
+	defer client.Disconnect(ctx)
 	seedCarsData(client, dbName)
 	collection = client.Database(dbName).Collection(collectionName)
 	filter := bson.D{{}}

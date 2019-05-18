@@ -27,7 +27,10 @@ func getMongoClient() *mongo.Client {
 	if os.Getenv("DATABASE_URL") != "" {
 		uri = os.Getenv("DATABASE_URL")
 	}
-	if client, err = mongo.Connect(context.Background(), options.Client().ApplyURI(uri)); err != nil {
+	opts := options.Client()
+	opts.ApplyURI(uri)
+	opts.SetMaxPoolSize(5)
+	if client, err = mongo.Connect(context.Background(), opts); err != nil {
 		panic(err)
 	}
 	return client

@@ -19,6 +19,7 @@ func TestDeleteOne(t *testing.T) {
 	var doc = bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta"}
 	var result *mongo.DeleteResult
 	client = getMongoClient()
+	defer client.Disconnect(ctx)
 	collection = client.Database(dbName).Collection(collectionName)
 	if _, err = collection.InsertOne(ctx, doc); err != nil {
 		t.Fatal(err)
@@ -42,6 +43,7 @@ func TestDeleteMany(t *testing.T) {
 	docs = append(docs, bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta", "counter": 2})
 	var result *mongo.DeleteResult
 	client = getMongoClient()
+	defer client.Disconnect(ctx)
 	collection = client.Database(dbName).Collection(collectionName)
 	if _, err = collection.InsertMany(ctx, docs); err != nil {
 		t.Fatal(err)
