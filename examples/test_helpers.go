@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"sync"
 
 	"github.com/simagix/keyhole/sim"
 	"go.mongodb.org/mongo-driver/bson"
@@ -19,10 +20,21 @@ const collectionName = "cars"
 const collectionFavorites = "favorites"
 const collectionExamples = "examples"
 
+var once sync.Once
+var (
+	instance *mongo.Client
+)
+
+func connectSingleton() *mongo.Client {
+	if instance == nil {
+		instance = getMongoClient()
+	}
+	return instance
+}
+
 func getMongoClient() *mongo.Client {
 	var err error
 	var client *mongo.Client
-
 	uri := "mongodb://localhost/argos?replicaSet=replset&authSource=admin"
 	if os.Getenv("DATABASE_URL") != "" {
 		uri = os.Getenv("DATABASE_URL")
@@ -31,7 +43,7 @@ func getMongoClient() *mongo.Client {
 	opts.ApplyURI(uri)
 	opts.SetMaxPoolSize(5)
 	if client, err = mongo.Connect(context.Background(), opts); err != nil {
-		panic(err)
+		fmt.Println(err.Error())
 	}
 	return client
 }
