@@ -15,6 +15,7 @@
 - TestChangeStreamDatabase
 - TestChangeStreamCollection
 - TestChangeStreamCollectionWithPipeline
+- TestConnectionPool
 - TestCountDocuments
 - TestDeleteOne
 - TestDeleteMany
@@ -34,3 +35,6 @@
 - TestTransactionAbort
 - TestUpdateOne
 - TestUpdateMany
+- TestConnectSimple
+- TestConnectBuild
+- TestConnectTLS

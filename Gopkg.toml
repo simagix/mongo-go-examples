@@ -1,11 +1,12 @@
 # Gopkg.toml example
 
 [[constraint]]
-  version = "v1.0.1"
+  version = "v1.1.1"
   name = "go.mongodb.org/mongo-driver"
 
 [[constraint]]
-  version = "v1.1.2"
+  version = "v1.3.0"
+  #branch = "mongo-driver"
   name = "github.com/simagix/keyhole"
 
 [prune]

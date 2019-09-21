@@ -13,7 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/x/network/connstring"
+	"go.mongodb.org/mongo-driver/x/mongo/driver/connstring"
 )
 
 var collection = "oplogs"
@@ -48,7 +48,10 @@ func TestChangeStreamClient(t *testing.T) {
 
 	stream := NewChangeStream()
 	stream.SetPipeline(pipeline)
-	// stream.Watch(client)
+	if testing.Short() {
+		t.Skip("test changes stream")
+		stream.Watch(client, silent)
+	}
 }
 
 func TestChangeStreamDatabase(t *testing.T) {
@@ -77,7 +80,10 @@ func TestChangeStreamDatabase(t *testing.T) {
 	stream := NewChangeStream()
 	stream.SetDatabase(cs.Database)
 	stream.SetPipeline(pipeline)
-	stream.Watch(client, silent)
+	if testing.Short() {
+		t.Skip("test changes stream")
+		stream.Watch(client, silent)
+	}
 }
 
 func TestChangeStreamCollection(t *testing.T) {
@@ -106,7 +112,10 @@ func TestChangeStreamCollection(t *testing.T) {
 	stream.SetCollection(collection)
 	stream.SetDatabase(cs.Database)
 	stream.SetPipeline(pipeline)
-	stream.Watch(client, silent)
+	if testing.Short() {
+		t.Skip("test changes stream")
+		stream.Watch(client, silent)
+	}
 }
 
 func TestChangeStreamCollectionWithPipeline(t *testing.T) {
@@ -134,7 +143,10 @@ func TestChangeStreamCollectionWithPipeline(t *testing.T) {
 	stream.SetCollection(collection)
 	stream.SetDatabase(cs.Database)
 	stream.SetPipeline(pipeline)
-	stream.Watch(client, silent)
+	if testing.Short() {
+		t.Skip("test changes stream")
+		stream.Watch(client, silent)
+	}
 }
 
 func execute(c *mongo.Collection) {

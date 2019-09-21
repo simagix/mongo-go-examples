@@ -5,6 +5,7 @@ package mongox
 import (
 	"context"
 	"encoding/json"
+	"os"
 	"testing"
 
 	"github.com/simagix/mongo-go-examples/examples"
@@ -21,6 +22,9 @@ func seed() {
 }
 
 func TestFindSort(t *testing.T) {
+	if os.Getenv("DATABASE_URL") != "" {
+		uri = os.Getenv("DATABASE_URL")
+	}
 	var ctx = context.Background()
 	client, err := Connect(ctx, uri)
 	if err != nil {
