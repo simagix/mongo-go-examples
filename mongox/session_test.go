@@ -14,7 +14,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var uri = "mongodb://localhost/argos?replicaSet=replset&authSource=admin"
+var uri = "mongodb://localhost/argos?replicaSet=replset"
 
 func seed() {
 	client, _ := mongo.Connect(context.Background(), options.Client().ApplyURI(uri))

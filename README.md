@@ -1,5 +1,6 @@
 # MongoDB mongo-go-driver and Change Streams Examples
 
+- 01/09/2020: Replaced with go.mongodb.org/mongo-driver (v1.2.0)
 - 02/25/2019: Replaced with go.mongodb.org/mongo-driver (v1.0.0-rc1)
 
 A MongoDB Change Streams implementation using [mongodb-go-driver](https://github.com/mongodb/mongo-go-driver).

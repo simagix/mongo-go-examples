@@ -35,7 +35,7 @@ func connectSingleton() *mongo.Client {
 func getMongoClient() *mongo.Client {
 	var err error
 	var client *mongo.Client
-	uri := "mongodb://localhost/argos?replicaSet=replset&authSource=admin"
+	uri := "mongodb://localhost/argos?replicaSet=replset"
 	if os.Getenv("DATABASE_URL") != "" {
 		uri = os.Getenv("DATABASE_URL")
 	}
@@ -45,6 +45,7 @@ func getMongoClient() *mongo.Client {
 	if client, err = mongo.Connect(context.Background(), opts); err != nil {
 		fmt.Println(err.Error())
 	}
+	client.Ping(context.Background(), nil)
 	return client
 }
 

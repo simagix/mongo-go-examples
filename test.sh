@@ -13,7 +13,8 @@ sleep 2
 # Case 2: print only updates
 #   '[{"$match": {"operationType": "update"}}]'
 export DATABASE_URL="mongodb://localhost:30097/argos?replicaSet=replset"
-GOCACHE=off go test ./... -v -short
+# GOCACHE=off go test ./... -v -short
+go test ./... -v -short
 
 echo ; echo "Shutdown mongod"
 mongo --quiet --port 30097 --eval 'db.getSisterDB("admin").shutdownServer()' > /dev/null 2>&1
