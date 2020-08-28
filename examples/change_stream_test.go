@@ -9,7 +9,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/simagix/keyhole/mdb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -131,7 +130,7 @@ func TestChangeStreamCollectionWithPipeline(t *testing.T) {
 		t.Fatal(err)
 	}
 	client = getMongoClient()
-	var pipeline = mdb.MongoPipeline(`[{"$match": {"operationType": {"$in": ["update", "delete"] } }}]`)
+	var pipeline = MongoPipeline(`[{"$match": {"operationType": {"$in": ["update", "delete"] } }}]`)
 	c := client.Database(cs.Database).Collection(collection)
 	c.InsertOne(ctx, bson.M{"city": "Atlanta"})
 

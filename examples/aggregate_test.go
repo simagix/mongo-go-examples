@@ -6,7 +6,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/simagix/keyhole/mdb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -36,7 +35,7 @@ func TestAggregateJSON(t *testing.T) {
 	opts := options.Aggregate()
 	opts.SetAllowDiskUse(true)
 	opts.SetBatchSize(5)
-	if cur, err = collection.Aggregate(ctx, mdb.MongoPipeline(pipeline), opts); err != nil {
+	if cur, err = collection.Aggregate(ctx, MongoPipeline(pipeline), opts); err != nil {
 		t.Fatal(err)
 	}
 	defer cur.Close(ctx)
@@ -100,7 +99,7 @@ func TestAggregateBSOND(t *testing.T) {
 	size := 10
 	client = getMongoClient()
 	seedCarsData(client, dbName)
-	pipeline := []bson.D{bson.D{{"$sample", bson.D{{"size", size}}}}}
+	pipeline := []bson.D{bson.D{{Key: "$sample", Value: bson.D{{Key: "size", Value: size}}}}}
 	collection = client.Database(dbName).Collection(collectionName)
 	opts := options.Aggregate()
 	if cur, err = collection.Aggregate(ctx, pipeline, opts); err != nil {

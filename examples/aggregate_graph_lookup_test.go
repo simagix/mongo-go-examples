@@ -6,7 +6,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/simagix/keyhole/mdb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -41,7 +40,7 @@ func TestAggregateGraphLookup(t *testing.T) {
 
 	collection = client.Database(dbName).Collection("employees")
 	opts := options.Aggregate()
-	if cur, err = collection.Aggregate(ctx, mdb.MongoPipeline(pipeline), opts); err != nil {
+	if cur, err = collection.Aggregate(ctx, MongoPipeline(pipeline), opts); err != nil {
 		t.Fatal(err)
 	}
 	defer cur.Close(ctx)

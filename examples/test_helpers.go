@@ -4,9 +4,10 @@ package examples
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/simagix/keyhole/sim"
@@ -96,11 +97,22 @@ func seedFavoritesData(client *mongo.Client, database string) int64 {
 	return count
 }
 
-func stringify(doc interface{}, opts ...string) string {
-	if len(opts) == 2 {
-		b, _ := json.MarshalIndent(doc, opts[0], opts[1])
-		return string(b)
+// MongoPipeline gets aggregation pipeline from a string
+func MongoPipeline(str string) mongo.Pipeline {
+	var pipeline = []bson.D{}
+	str = strings.TrimSpace(str)
+	if strings.Index(str, "[") != 0 {
+		var doc bson.D
+		bson.UnmarshalExtJSON([]byte(str), false, &doc)
+		pipeline = append(pipeline, doc)
+	} else {
+		bson.UnmarshalExtJSON([]byte(str), false, &pipeline)
 	}
-	b, _ := json.Marshal(doc)
-	return string(b)
+	return pipeline
+}
+
+func toInt64(num interface{}) int64 {
+	f := fmt.Sprintf("%v", num)
+	x, _ := strconv.ParseFloat(f, 64)
+	return int64(x)
 }

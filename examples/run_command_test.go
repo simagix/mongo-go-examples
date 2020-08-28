@@ -20,5 +20,5 @@ func TestRunCommand(t *testing.T) {
 	if err = client.Database("admin").RunCommand(context.Background(), command).Decode(&result); err != nil {
 		t.Fatal(err)
 	}
-	t.Log(stringify(result))
+	t.Log(result)
 }

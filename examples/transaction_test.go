@@ -56,7 +56,7 @@ func TestTransactionCommit(t *testing.T) {
 		t.Fatal(err)
 	}
 	if v["year"] != int32(2000) {
-		t.Log(stringify(v))
+		t.Log(v)
 		t.Fatal("expected 2000 but got", v["year"])
 	}
 
@@ -111,7 +111,7 @@ func TestTransactionAbort(t *testing.T) {
 		t.Fatal(err)
 	}
 	if v["year"] != int32(1998) {
-		t.Log(stringify(v))
+		t.Log(v)
 		t.Fatal("expected 1998 but got", v["year"])
 	}
 
