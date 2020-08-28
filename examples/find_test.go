@@ -17,7 +17,9 @@ func TestFindOne(t *testing.T) {
 	var collection *mongo.Collection
 	var ctx = context.Background()
 	var doc bson.M
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	defer client.Disconnect(ctx)
 	seedCarsData(client, dbName)
 	collection = client.Database(dbName).Collection(collectionName)
@@ -37,7 +39,9 @@ func TestFindMany(t *testing.T) {
 	var cur *mongo.Cursor
 	var ctx = context.Background()
 	var doc bson.M
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	defer client.Disconnect(ctx)
 	seedCarsData(client, dbName)
 	collection = client.Database(dbName).Collection(collectionName)
@@ -64,7 +68,9 @@ func TestFindManyWithOptions(t *testing.T) {
 	var cur *mongo.Cursor
 	var ctx = context.Background()
 	var doc bson.M
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	defer client.Disconnect(ctx)
 	seedCarsData(client, dbName)
 	collection = client.Database(dbName).Collection(collectionName)

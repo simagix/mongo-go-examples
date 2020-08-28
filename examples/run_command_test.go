@@ -14,7 +14,9 @@ func TestRunCommand(t *testing.T) {
 	var err error
 	var client *mongo.Client
 	var result bson.M
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	defer client.Disconnect(context.Background())
 	command := bson.D{{Key: "isMaster", Value: 1}}
 	if err = client.Database("admin").RunCommand(context.Background(), command).Decode(&result); err != nil {

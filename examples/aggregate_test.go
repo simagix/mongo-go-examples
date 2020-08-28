@@ -18,7 +18,9 @@ func TestAggregateJSON(t *testing.T) {
 	var cur *mongo.Cursor
 	var ctx = context.Background()
 
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	defer client.Disconnect(ctx)
 	seedCarsData(client, dbName)
 
@@ -55,7 +57,9 @@ func TestAggregatePipeline(t *testing.T) {
 	var cur *mongo.Cursor
 	var ctx = context.Background()
 
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	seedCarsData(client, dbName)
 
 	// this cause warning from go vet
@@ -97,7 +101,9 @@ func TestAggregateBSOND(t *testing.T) {
 	var cur *mongo.Cursor
 	var ctx = context.Background()
 	size := 10
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	seedCarsData(client, dbName)
 	pipeline := []bson.D{bson.D{{Key: "$sample", Value: bson.D{{Key: "size", Value: size}}}}}
 	collection = client.Database(dbName).Collection(collectionName)

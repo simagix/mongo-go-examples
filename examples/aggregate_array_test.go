@@ -23,7 +23,9 @@ func TestAggregateArray(t *testing.T) {
 	var ctx = context.Background()
 	var doc bson.M
 
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	defer client.Disconnect(ctx)
 	seedFavoritesData(client, dbName)
 
@@ -78,7 +80,9 @@ func TestAggregateConcatArrays(t *testing.T) {
 	var cur *mongo.Cursor
 	var ctx = context.Background()
 	var doc bson.M
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	defer client.Disconnect(ctx)
 	seeded := seedFavoritesData(client, dbName)
 

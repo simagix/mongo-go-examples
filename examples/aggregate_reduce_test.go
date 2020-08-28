@@ -17,7 +17,9 @@ func TestAggregateMatch(t *testing.T) {
 	var cur *mongo.Cursor
 	var ctx = context.Background()
 
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	defer client.Disconnect(ctx)
 	seedFavoritesData(client, dbName)
 
@@ -60,7 +62,9 @@ func TestAggregateRedact(t *testing.T) {
 	var cur *mongo.Cursor
 	var ctx = context.Background()
 
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	seedFavoritesData(client, dbName)
 
 	pipeline := `[
@@ -115,7 +119,9 @@ func TestAggregateFilter(t *testing.T) {
 	var cur *mongo.Cursor
 	var ctx = context.Background()
 
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	seedFavoritesData(client, dbName)
 
 	pipeline := `[

@@ -18,7 +18,9 @@ func TestConnectionPool(t *testing.T) {
 	var client *mongo.Client
 	var collection *mongo.Collection
 	var ctx = context.Background()
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	defer client.Disconnect(ctx)
 	seedCarsData(client, dbName)
 	channel := make(chan string)

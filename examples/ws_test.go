@@ -7,7 +7,6 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"testing"
 
@@ -23,7 +22,7 @@ func TestConnectSimple(t *testing.T) {
 		t.Fatal(err)
 	}
 	count, _ := client.Database("test").Collection("tutorial").CountDocuments(context.TODO(), bson.D{{}})
-	fmt.Println("count:", count)
+	t.Log("count:", count)
 }
 
 func TestConnectBuild(t *testing.T) {
@@ -38,7 +37,7 @@ func TestConnectBuild(t *testing.T) {
 		t.Fatal(err)
 	}
 	count, _ := client.Database("test").Collection("tutorial").CountDocuments(context.TODO(), bson.D{{}})
-	fmt.Println("count:", count)
+	t.Log("count:", count)
 }
 
 func TestConnectTLS(t *testing.T) {
@@ -61,5 +60,5 @@ func TestConnectTLS(t *testing.T) {
 		t.Fatal(err)
 	}
 	count, _ := client.Database("test").Collection("tutorial").CountDocuments(context.TODO(), bson.D{{}})
-	fmt.Println("count:", count)
+	t.Log("count:", count)
 }

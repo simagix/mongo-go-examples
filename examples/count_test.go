@@ -16,7 +16,9 @@ func TestCountDocuments(t *testing.T) {
 	var collection *mongo.Collection
 	var ctx = context.Background()
 	var count int64
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	defer client.Disconnect(ctx)
 	seedCarsData(client, dbName)
 	collection = client.Database(dbName).Collection(collectionName)

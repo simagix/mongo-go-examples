@@ -22,7 +22,9 @@ func TestAggregateLookup(t *testing.T) {
 	var ctx = context.Background()
 	var doc bson.M
 
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	defer client.Disconnect(ctx)
 	total := seedCarsData(client, dbName)
 

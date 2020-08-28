@@ -21,7 +21,9 @@ func TestGridFS(t *testing.T) {
 	var ustream *gridfs.UploadStream
 
 	str := "This is a test file"
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	defer client.Disconnect(context.Background())
 
 	if bucket, err = gridfs.NewBucket(client.Database(dbName), options.GridFSBucket().SetName("myFiles")); err != nil {

@@ -33,7 +33,9 @@ func TestChangeStreamClient(t *testing.T) {
 	if cs, err = connstring.Parse(uri); err != nil {
 		t.Fatal(err)
 	}
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	defer client.Disconnect(ctx)
 	var pipeline []bson.D
 	pipeline = mongo.Pipeline{}
@@ -65,7 +67,9 @@ func TestChangeStreamDatabase(t *testing.T) {
 	if cs, err = connstring.Parse(uri); err != nil {
 		t.Fatal(err)
 	}
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	var pipeline []bson.D
 	pipeline = mongo.Pipeline{}
 	c := client.Database(cs.Database).Collection(collection)
@@ -97,7 +101,9 @@ func TestChangeStreamCollection(t *testing.T) {
 	if cs, err = connstring.Parse(uri); err != nil {
 		t.Fatal(err)
 	}
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	var pipeline []bson.D
 	pipeline = mongo.Pipeline{}
 	c := client.Database(cs.Database).Collection(collection)
@@ -129,7 +135,9 @@ func TestChangeStreamCollectionWithPipeline(t *testing.T) {
 	if cs, err = connstring.Parse(uri); err != nil {
 		t.Fatal(err)
 	}
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	var pipeline = MongoPipeline(`[{"$match": {"operationType": {"$in": ["update", "delete"] } }}]`)
 	c := client.Database(cs.Database).Collection(collection)
 	c.InsertOne(ctx, bson.M{"city": "Atlanta"})

@@ -16,7 +16,9 @@ func TestDistinct(t *testing.T) {
 	var collection *mongo.Collection
 	var cur *mongo.Cursor
 	var ctx = context.Background()
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	defer client.Disconnect(ctx)
 	seedCarsData(client, dbName)
 	collection = client.Database(dbName).Collection(collectionName)

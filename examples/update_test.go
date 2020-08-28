@@ -19,7 +19,9 @@ func TestUpdateOne(t *testing.T) {
 	var ctx = context.Background()
 	var doc = bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta"}
 	var result *mongo.UpdateResult
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	defer client.Disconnect(ctx)
 	collection = client.Database(dbName).Collection(collectionName)
 	if _, err = collection.InsertOne(ctx, doc); err != nil {
@@ -46,7 +48,9 @@ func TestUpdateMany(t *testing.T) {
 	docs = append(docs, bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta", "counter": int32(1)})
 	docs = append(docs, bson.M{"_id": primitive.NewObjectID(), "hometown": "Atlanta", "counter": int32(2)})
 	var result *mongo.UpdateResult
-	client = getMongoClient()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
 	defer client.Disconnect(ctx)
 	collection = client.Database(dbName).Collection(collectionName)
 	if _, err = collection.InsertMany(ctx, docs); err != nil {

@@ -10,7 +10,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/simagix/keyhole/sim"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -22,32 +21,31 @@ const collectionFavorites = "favorites"
 const collectionExamples = "examples"
 
 var once sync.Once
-var (
-	instance *mongo.Client
-)
 
-func connectSingleton() *mongo.Client {
-	if instance == nil {
-		instance = getMongoClient()
-	}
-	return instance
+// GetMongoClient returns *mongo.Client
+func GetMongoClient(uri string) (*mongo.Client, error) {
+	return getMongoClientByURI(uri)
 }
 
-func getMongoClient() *mongo.Client {
-	var err error
-	var client *mongo.Client
+func getMongoClient() (*mongo.Client, error) {
 	uri := "mongodb://localhost/argos?replicaSet=replset"
 	if os.Getenv("DATABASE_URL") != "" {
 		uri = os.Getenv("DATABASE_URL")
 	}
+	return getMongoClientByURI(uri)
+}
+
+func getMongoClientByURI(uri string) (*mongo.Client, error) {
+	var err error
+	var client *mongo.Client
 	opts := options.Client()
 	opts.ApplyURI(uri)
 	opts.SetMaxPoolSize(5)
 	if client, err = mongo.Connect(context.Background(), opts); err != nil {
-		fmt.Println(err.Error())
+		return client, err
 	}
 	client.Ping(context.Background(), nil)
-	return client
+	return client, err
 }
 
 // SeedCarsData wraps seedCarsData
@@ -65,11 +63,10 @@ func seedCarsData(client *mongo.Client, database string) int64 {
 		return 0
 	}
 	if count == 0 {
-		f := sim.NewFeeder()
+		f := NewFeeder()
 		f.SetTotal(100)
 		f.SetIsDrop(true)
 		f.SetDatabase(database)
-		f.SetShowProgress(false)
 		f.SeedCars(client)
 		return int64(100)
 	}
@@ -86,11 +83,10 @@ func seedFavoritesData(client *mongo.Client, database string) int64 {
 		return 0
 	}
 	if count == 0 {
-		f := sim.NewFeeder()
+		f := NewFeeder()
 		f.SetTotal(100)
 		f.SetIsDrop(true)
 		f.SetDatabase(database)
-		f.SetShowProgress(false)
 		f.SeedFavorites(client)
 		return int64(100)
 	}
