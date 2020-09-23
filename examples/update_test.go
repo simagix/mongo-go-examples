@@ -66,3 +66,28 @@ func TestUpdateMany(t *testing.T) {
 	}
 	collection.DeleteMany(ctx, bson.M{"hometown": "Atlanta"})
 }
+
+func TestUpdateArray(t *testing.T) {
+	var err error
+	var client *mongo.Client
+	var ctx = context.Background()
+	if client, err = getMongoClient(); err != nil {
+		t.Fatal(err)
+	}
+	doc := bson.M{"to": []bson.M{
+		bson.M{"contact": bson.M{"phone": "+33123456789"}},
+		bson.M{"contact": bson.M{"phone": "+33987654321"}},
+	}}
+	defer client.Disconnect(ctx)
+	collection := client.Database("test").Collection("foo")
+	collection.DeleteMany(ctx, bson.M{})
+	collection.InsertOne(ctx, doc)
+
+	var filter bson.M
+	json.Unmarshal([]byte(`{"to": { "$elemMatch": {"contact.phone": "+33123456789"} } }`), &filter)
+	var update bson.M
+	json.Unmarshal([]byte(`{"$set": {"to.$.contact.name": "John Doe"} }`), &update)
+	if _, err = collection.UpdateOne(ctx, filter, update); err != nil {
+		t.Fatal(err)
+	}
+}
